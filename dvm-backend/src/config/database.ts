@@ -2,7 +2,10 @@ import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
 
-const DB_PATH = path.join(__dirname, '../../database/vitals.db');
+const IS_VERCEL = process.env.VERCEL === '1';
+const DB_PATH = IS_VERCEL
+    ? path.join('/tmp', 'vitals.db')
+    : path.join(__dirname, '../../database/vitals.db');
 
 export function initDatabase(): Database.Database {
     const dbDir = path.dirname(DB_PATH);
