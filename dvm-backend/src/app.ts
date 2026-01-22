@@ -24,7 +24,7 @@ function createApp(): Application {
     const controller = new VitalController(service);
 
     /// Health check endpoint
-    app.get('/health', (req, res) => {
+    app.get('/', (req, res) => {
         res.json({
             status: 'ok',
             timestamp: new Date().toISOString(),
