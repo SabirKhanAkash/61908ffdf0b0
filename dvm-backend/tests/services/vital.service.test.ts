@@ -1,5 +1,4 @@
 import { VitalService } from '../../src/services/vital.service';
-import { VitalRepository } from '../../src/repositories/vital.repository';
 import { VitalLog } from '../../src/models/vital.model';
 
 // Mock repository
@@ -7,7 +6,7 @@ class MockVitalRepository {
     private logs: VitalLog[] = [];
     private nextId = 1;
 
-    create(vital: any): VitalLog {
+    async create(vital: any): Promise<VitalLog> {
         const log: VitalLog = {
             id: this.nextId++,
             ...vital,
@@ -17,11 +16,11 @@ class MockVitalRepository {
         return log;
     }
 
-    getLatest(limit: number): VitalLog[] {
+    async getLatest(limit: number): Promise<VitalLog[]> {
         return this.logs.slice(-limit).reverse();
     }
 
-    calculateRollingAverage(limit: number) {
+    async calculateRollingAverage(limit: number) {
         const recentLogs = this.logs.slice(-limit);
         if (recentLogs.length === 0) {
             return { thermal: 0, battery: 0, memory: 0 };
@@ -43,16 +42,16 @@ class MockVitalRepository {
         };
     }
 
-    count(): number {
+    async count(): Promise<number> {
         return this.logs.length;
     }
 
-    countDevices(): number {
+    async countDevices(): Promise<number> {
         const devices = new Set(this.logs.map(log => log.device_id));
         return devices.size;
     }
 
-    getTimeRange() {
+    async getTimeRange() {
         if (this.logs.length === 0) {
             return { earliest: null, latest: null };
         }
@@ -63,11 +62,11 @@ class MockVitalRepository {
         };
     }
 
-    getByDeviceId(deviceId: string, limit: number): VitalLog[] {
+    async getByDeviceId(deviceId: string, limit: number): Promise<VitalLog[]> {
         return this.logs.filter(log => log.device_id === deviceId).slice(-limit).reverse();
     }
 
-    reset() {
+    async reset() {
         this.logs = [];
         this.nextId = 1;
     }
@@ -83,7 +82,7 @@ describe('VitalService', () => {
     });
 
     describe('createVitalLog', () => {
-        it('should create a valid vital log', () => {
+        it('should create a valid vital log', async () => {
             const validData = {
                 device_id: 'test-device-1',
                 timestamp: '2024-01-20T10:00:00Z',
@@ -92,14 +91,14 @@ describe('VitalService', () => {
                 memory_usage: 60,
             };
 
-            const result = service.createVitalLog(validData);
+            const result = await service.createVitalLog(validData);
 
             expect(result.success).toBe(true);
             expect(result.data).toBeDefined();
             expect(result.data?.device_id).toBe('test-device-1');
         });
 
-        it('should reject thermal_value outside 0-3 range', () => {
+        it('should reject thermal_value outside 0-3 range', async () => {
             const invalidData = {
                 device_id: 'test-device',
                 timestamp: '2024-01-20T10:00:00Z',
@@ -108,14 +107,14 @@ describe('VitalService', () => {
                 memory_usage: 60,
             };
 
-            const result = service.createVitalLog(invalidData);
+            const result = await service.createVitalLog(invalidData);
 
             expect(result.success).toBe(false);
             expect(result.errors).toBeDefined();
             expect(result.errors?.some(e => e.field === 'thermal_value')).toBe(true);
         });
 
-        it('should reject battery_level outside 0-100 range', () => {
+        it('should reject battery_level outside 0-100 range', async () => {
             const invalidData = {
                 device_id: 'test-device',
                 timestamp: '2024-01-20T10:00:00Z',
@@ -124,13 +123,13 @@ describe('VitalService', () => {
                 memory_usage: 60,
             };
 
-            const result = service.createVitalLog(invalidData);
+            const result = await service.createVitalLog(invalidData);
 
             expect(result.success).toBe(false);
             expect(result.errors?.some(e => e.field === 'battery_level')).toBe(true);
         });
 
-        it('should reject memory_usage outside 0-100 range', () => {
+        it('should reject memory_usage outside 0-100 range', async () => {
             const invalidData = {
                 device_id: 'test-device',
                 timestamp: '2024-01-20T10:00:00Z',
@@ -139,13 +138,13 @@ describe('VitalService', () => {
                 memory_usage: -10, // Invalid
             };
 
-            const result = service.createVitalLog(invalidData);
+            const result = await service.createVitalLog(invalidData);
 
             expect(result.success).toBe(false);
             expect(result.errors?.some(e => e.field === 'memory_usage')).toBe(true);
         });
 
-        it('should reject future timestamps', () => {
+        it('should reject future timestamps', async () => {
             const futureDate = new Date();
             futureDate.setFullYear(futureDate.getFullYear() + 1);
 
@@ -157,13 +156,13 @@ describe('VitalService', () => {
                 memory_usage: 60,
             };
 
-            const result = service.createVitalLog(invalidData);
+            const result = await service.createVitalLog(invalidData);
 
             expect(result.success).toBe(false);
             expect(result.errors?.some(e => e.field === 'timestamp')).toBe(true);
         });
 
-        it('should reject missing required fields', () => {
+        it('should reject missing required fields', async () => {
             const incompleteData = {
                 device_id: 'test-device',
                 // Missing timestamp
@@ -172,7 +171,7 @@ describe('VitalService', () => {
                 // Missing memory_usage
             };
 
-            const result = service.createVitalLog(incompleteData);
+            const result = await service.createVitalLog(incompleteData);
 
             expect(result.success).toBe(false);
             expect(result.errors).toBeDefined();
@@ -181,9 +180,9 @@ describe('VitalService', () => {
     });
 
     describe('getAnalytics', () => {
-        it('should calculate correct rolling average', () => {
+        it('should calculate correct rolling average', async () => {
             // Add test data
-            service.createVitalLog({
+            await service.createVitalLog({
                 device_id: 'device-1',
                 timestamp: '2024-01-20T10:00:00Z',
                 thermal_value: 0,
@@ -191,7 +190,7 @@ describe('VitalService', () => {
                 memory_usage: 50,
             });
 
-            service.createVitalLog({
+            await service.createVitalLog({
                 device_id: 'device-1',
                 timestamp: '2024-01-20T10:01:00Z',
                 thermal_value: 2,
@@ -199,7 +198,7 @@ describe('VitalService', () => {
                 memory_usage: 70,
             });
 
-            const analytics = service.getAnalytics();
+            const analytics = await service.getAnalytics();
 
             expect(analytics.rolling_average.thermal).toBe(1); // (0 + 2) / 2
             expect(analytics.rolling_average.battery).toBe(70); // (80 + 60) / 2
@@ -207,8 +206,8 @@ describe('VitalService', () => {
             expect(analytics.total_logs).toBe(2);
         });
 
-        it('should return zero averages when no data', () => {
-            const analytics = service.getAnalytics();
+        it('should return zero averages when no data', async () => {
+            const analytics = await service.getAnalytics();
 
             expect(analytics.rolling_average.thermal).toBe(0);
             expect(analytics.rolling_average.battery).toBe(0);

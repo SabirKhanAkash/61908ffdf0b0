@@ -1,104 +1,108 @@
-import Database from 'better-sqlite3';
+import { Client } from '@libsql/client';
 import { VitalLog, VitalLogInput } from '../models/vital.model';
 
 export class VitalRepository {
-    private db: Database.Database;
+    private db: Client;
 
-    constructor(database: Database.Database) {
+    constructor(database: Client) {
         this.db = database;
     }
 
-    create(vital: VitalLogInput): VitalLog {
-        const stmt = this.db.prepare(`
-            INSERT INTO vitals (device_id, timestamp, thermal_value, battery_level, memory_usage)
-            VALUES (?, ?, ?, ?, ?)
-        `);
-        const result = stmt.run(
-            vital.device_id,
-            vital.timestamp,
-            vital.thermal_value,
-            vital.battery_level,
-            vital.memory_usage
-        );
-        const created = this.db.prepare(`
-            SELECT * FROM vitals WHERE id = ?
-        `).get(result.lastInsertRowid) as VitalLog;
-        return created;
+    async create(vital: VitalLogInput): Promise<VitalLog> {
+        const result = await this.db.execute({
+            sql: `INSERT INTO vitals (device_id, timestamp, thermal_value, battery_level, memory_usage)
+                  VALUES (?, ?, ?, ?, ?)`,
+            args: [
+                vital.device_id,
+                vital.timestamp,
+                vital.thermal_value,
+                vital.battery_level,
+                vital.memory_usage
+            ]
+        });
+
+        const createdResult = await this.db.execute({
+            sql: `SELECT * FROM vitals WHERE id = ?`,
+            args: [Number(result.lastInsertRowid)]
+        });
+
+        return createdResult.rows[0] as unknown as VitalLog;
     }
 
-    getLatest(limit: number = 100): VitalLog[] {
-        const stmt = this.db.prepare(`
-            SELECT * FROM vitals ORDER BY timestamp DESC, created_at DESC
-            LIMIT ?
-        `);
-        return stmt.all(limit) as VitalLog[];
+    async getLatest(limit: number = 100): Promise<VitalLog[]> {
+        const result = await this.db.execute({
+            sql: `SELECT * FROM vitals ORDER BY timestamp DESC, created_at DESC LIMIT ?`,
+            args: [limit]
+        });
+        return result.rows as unknown as VitalLog[];
     }
 
-    getAll(): VitalLog[] {
-        const stmt = this.db.prepare(`
-            SELECT * FROM vitals ORDER BY timestamp DESC
-        `);
-        return stmt.all() as VitalLog[];
+    async getAll(): Promise<VitalLog[]> {
+        const result = await this.db.execute(`SELECT * FROM vitals ORDER BY timestamp DESC`);
+        return result.rows as unknown as VitalLog[];
     }
 
-    getByDeviceId(deviceId: string, limit: number = 100): VitalLog[] {
-        const stmt = this.db.prepare(`
-            SELECT * FROM vitals 
-            WHERE device_id = ?
-            ORDER BY timestamp DESC
-            LIMIT ?
-        `);
-        return stmt.all(deviceId, limit) as VitalLog[];
+    async getByDeviceId(deviceId: string, limit: number = 100): Promise<VitalLog[]> {
+        const result = await this.db.execute({
+            sql: `SELECT * FROM vitals WHERE device_id = ? ORDER BY timestamp DESC LIMIT ?`,
+            args: [deviceId, limit]
+        });
+        return result.rows as unknown as VitalLog[];
     }
 
-    count(): number {
-        const result = this.db.prepare('SELECT COUNT(*) as count FROM vitals').get() as { count: number };
-        return result.count;
+    async count(): Promise<number> {
+        const result = await this.db.execute('SELECT COUNT(*) as count FROM vitals');
+        return result.rows[0].count as number;
     }
 
-    countDevices(): number {
-        const result = this.db.prepare('SELECT COUNT(DISTINCT device_id) as count FROM vitals').get() as { count: number };
-        return result.count;
+    async countDevices(): Promise<number> {
+        const result = await this.db.execute('SELECT COUNT(DISTINCT device_id) as count FROM vitals');
+        return result.rows[0].count as number;
     }
 
-    calculateRollingAverage(limit: number = 100): { thermal: number; battery: number; memory: number } {
-        const stmt = this.db.prepare(`
-      SELECT 
-        AVG(thermal_value) as avg_thermal,
-        AVG(battery_level) as avg_battery,
-        AVG(memory_usage) as avg_memory
-      FROM (
-        SELECT thermal_value, battery_level, memory_usage
-        FROM vitals
-        ORDER BY timestamp DESC, created_at DESC
-        LIMIT ?
-      )
-    `);
+    async calculateRollingAverage(limit: number = 100): Promise<{ thermal: number; battery: number; memory: number }> {
+        const result = await this.db.execute({
+            sql: `
+              SELECT 
+                AVG(thermal_value) as avg_thermal,
+                AVG(battery_level) as avg_battery,
+                AVG(memory_usage) as avg_memory
+              FROM (
+                SELECT thermal_value, battery_level, memory_usage
+                FROM vitals
+                ORDER BY timestamp DESC, created_at DESC
+                LIMIT ?
+              )
+            `,
+            args: [limit]
+        });
 
-        const result = stmt.get(limit) as any;
+        const row = result.rows[0];
 
         return {
-            thermal: result.avg_thermal ? parseFloat(result.avg_thermal.toFixed(2)) : 0,
-            battery: result.avg_battery ? parseFloat(result.avg_battery.toFixed(2)) : 0,
-            memory: result.avg_memory ? parseFloat(result.avg_memory.toFixed(2)) : 0,
+            thermal: row.avg_thermal ? parseFloat((row.avg_thermal as number).toFixed(2)) : 0,
+            battery: row.avg_battery ? parseFloat((row.avg_battery as number).toFixed(2)) : 0,
+            memory: row.avg_memory ? parseFloat((row.avg_memory as number).toFixed(2)) : 0,
         };
     }
 
-    getTimeRange(): { earliest: string | null; latest: string | null } {
-        const result = this.db.prepare(`
-      SELECT 
-        MIN(timestamp) as earliest,
-        MAX(timestamp) as latest
-      FROM vitals
-    `).get() as any;
+    async getTimeRange(): Promise<{ earliest: string | null; latest: string | null }> {
+        const result = await this.db.execute(`
+          SELECT 
+            MIN(timestamp) as earliest,
+            MAX(timestamp) as latest
+          FROM vitals
+        `);
+
+        const row = result.rows[0];
 
         return {
-            earliest: result.earliest,
-            latest: result.latest,
+            earliest: (row.earliest as string) || null,
+            latest: (row.latest as string) || null,
         };
     }
 
-    deleteAll(): void {
-        this.db.prepare('DELETE FROM vitals').run();
+    async deleteAll(): Promise<void> {
+        await this.db.execute('DELETE FROM vitals');
     }
 }

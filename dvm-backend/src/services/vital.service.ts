@@ -9,7 +9,7 @@ export class VitalService {
         this.repository = repository;
     }
 
-    createVitalLog(data: any): { success: boolean; data?: VitalLog; errors?: any[] } {
+    async createVitalLog(data: any): Promise<{ success: boolean; data?: VitalLog; errors?: any[] }> {
         const validationErrors = validateVitalLog(data);
 
         if (!isValid(validationErrors)) {
@@ -27,7 +27,7 @@ export class VitalService {
                 battery_level: data.battery_level,
                 memory_usage: data.memory_usage
             };
-            const createdVitalLog = this.repository.create(vitalLog);
+            const createdVitalLog = await this.repository.create(vitalLog);
             return {
                 success: true,
                 data: createdVitalLog
@@ -43,15 +43,17 @@ export class VitalService {
         }
     }
 
-    getLatestLogs(limit: number = 100): VitalLog[] {
-        return this.repository.getLatest(limit);
+    async getLatestLogs(limit: number = 100): Promise<VitalLog[]> {
+        return await this.repository.getLatest(limit);
     }
 
-    getAnalytics(): VitalAnalytics {
-        const rollingAverage = this.repository.calculateRollingAverage(100);
-        const totalLogs = this.repository.count();
-        const deviceCount = this.repository.countDevices();
-        const timeRange = this.repository.getTimeRange();
+    async getAnalytics(): Promise<VitalAnalytics> {
+        const [rollingAverage, totalLogs, deviceCount, timeRange] = await Promise.all([
+            this.repository.calculateRollingAverage(100),
+            this.repository.count(),
+            this.repository.countDevices(),
+            this.repository.getTimeRange()
+        ]);
 
         const analytics: VitalAnalytics = {
             rolling_average: rollingAverage,
@@ -64,7 +66,7 @@ export class VitalService {
         return analytics;
     }
 
-    getDeviceLogs(deviceId: string, limit: number = 100): VitalLog[] {
-        return this.repository.getByDeviceId(deviceId, limit);
+    async getDeviceLogs(deviceId: string, limit: number = 100): Promise<VitalLog[]> {
+        return await this.repository.getByDeviceId(deviceId, limit);
     }
 }

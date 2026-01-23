@@ -9,7 +9,7 @@ import { errorHandler, notFoundHandler, requestLogger } from './middlewares/erro
 
 const PORT = process.env.PORT || 3000;
 
-function createApp(): Application {
+async function createApp(): Promise<Application> {
     const app = express();
 
     /// Middleware
@@ -18,13 +18,13 @@ function createApp(): Application {
     app.use(requestLogger);
 
     /// Initialize database and dependencies
-    const db = getDatabase();
+    const db = await getDatabase();
     const repository = new VitalRepository(db);
     const service = new VitalService(repository);
     const controller = new VitalController(service);
 
     /// Health check endpoint
-    app.get('/', (req, res) => {
+    app.get('/health', (req, res) => {
         res.json({
             status: 'ok',
             timestamp: new Date().toISOString(),
@@ -43,8 +43,8 @@ function createApp(): Application {
 }
 
 /// Start the server
-function startServer(): void {
-    const app = createApp();
+async function startServer(): Promise<void> {
+    const app = await createApp();
 
     const server = app.listen(PORT, () => {
         console.log('=================================');

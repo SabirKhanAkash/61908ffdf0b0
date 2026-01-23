@@ -1,21 +1,36 @@
-import Database from 'better-sqlite3';
+import { createClient, Client } from '@libsql/client';
 import path from 'path';
 import fs from 'fs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const IS_VERCEL = process.env.VERCEL === '1';
-const DB_PATH = IS_VERCEL
-    ? path.join('/tmp', 'vitals.db')
-    : path.join(__dirname, '../../database/vitals.db');
 
-export function initDatabase(): Database.Database {
-    const dbDir = path.dirname(DB_PATH);
+function getDatabaseUrl(): string {
+    const tursoUrl = process.env.TURSO_DATABASE_URL;
+    if (tursoUrl) return tursoUrl;
+
+    if (IS_VERCEL) {
+        return 'file:/tmp/vitals.db';
+    }
+
+    const localDbPath = path.join(__dirname, '../../database/vitals.db');
+    const dbDir = path.dirname(localDbPath);
     if (!fs.existsSync(dbDir)) {
         fs.mkdirSync(dbDir, { recursive: true });
     }
+    return `file:${localDbPath}`;
+}
 
-    const db = new Database(DB_PATH, { verbose: console.log });
+export async function initDatabase(): Promise<Client> {
+    const url = getDatabaseUrl();
+    const authToken = process.env.TURSO_AUTH_TOKEN;
 
-    db.pragma('foreign_keys = ON');
+    const db = createClient({
+        url: url,
+        authToken: authToken,
+    });
 
     const createTableSQL = `
         CREATE TABLE IF NOT EXISTS vitals (
@@ -29,21 +44,21 @@ export function initDatabase(): Database.Database {
         )
     `;
 
-    db.exec(createTableSQL);
+    await db.execute(createTableSQL);
 
-    db.exec('CREATE INDEX IF NOT EXISTS idx_timestamp ON vitals(timestamp DESC)');
-    db.exec('CREATE INDEX IF NOT EXISTS idx_device_id ON vitals(device_id)');
-    db.exec('CREATE INDEX IF NOT EXISTS idx_created_at ON vitals(created_at DESC)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_timestamp ON vitals(timestamp DESC)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_device_id ON vitals(device_id)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_created_at ON vitals(created_at DESC)');
 
-    console.log('Successfully SQLite Database initialized...');
+    console.log(`Successfully Database initialized at ${url}...`);
     return db;
 }
 
-let dbInstance: Database.Database | null = null;
+let dbInstance: Client | null = null;
 
-export function getDatabase(): Database.Database {
+export async function getDatabase(): Promise<Client> {
     if (!dbInstance) {
-        dbInstance = initDatabase();
+        dbInstance = await initDatabase();
     }
     return dbInstance;
 }
@@ -52,6 +67,6 @@ export function closeDatabase(): void {
     if (dbInstance) {
         dbInstance.close();
         dbInstance = null;
-        console.log('Successfully SQLite Database connection closed...');
+        console.log('Successfully Database connection closed...');
     }
 }

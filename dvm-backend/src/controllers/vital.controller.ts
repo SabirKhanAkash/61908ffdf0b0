@@ -10,7 +10,7 @@ export class VitalController {
 
     createVital = async (req: Request, res: Response): Promise<void> => {
         try {
-            const result = this.service.createVitalLog(req.body);
+            const result = await this.service.createVitalLog(req.body);
 
             if (!result.success) {
                 res.status(400).json({
@@ -39,7 +39,7 @@ export class VitalController {
     getVitals = async (req: Request, res: Response): Promise<void> => {
         try {
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
-            const logs = this.service.getLatestLogs(limit);
+            const logs = await this.service.getLatestLogs(limit);
 
             res.status(200).json({
                 success: true,
@@ -58,7 +58,7 @@ export class VitalController {
 
     getAnalytics = async (req: Request, res: Response): Promise<void> => {
         try {
-            const analytics = this.service.getAnalytics();
+            const analytics = await this.service.getAnalytics();
 
             res.status(200).json({
                 success: true,
@@ -79,7 +79,7 @@ export class VitalController {
             const { deviceId } = req.params;
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
 
-            const logs = this.service.getDeviceLogs(deviceId, limit);
+            const logs = await this.service.getDeviceLogs(deviceId, limit);
 
             res.status(200).json({
                 success: true,
