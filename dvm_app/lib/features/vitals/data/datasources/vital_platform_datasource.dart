@@ -1,3 +1,5 @@
+import 'package:dvm_app/core/constants/app_constants.dart';
+import 'package:dvm_app/features/vitals/data/models/models.dart';
 import 'package:dvm_app/features/vitals/domain/datasources/datasources.dart';
 import 'package:flutter/services.dart';
 
@@ -18,7 +20,10 @@ class VitalPlatformDataSourceImpl implements VitalPlatformDataSource {
       );
 
       if (result == null) {
-        throw const PlatformException('Platform returned null data');
+        throw PlatformException(
+          message: 'Platform returned null data',
+          code: '',
+        );
       }
 
       // Convert platform response to model
@@ -26,11 +31,15 @@ class VitalPlatformDataSourceImpl implements VitalPlatformDataSource {
     } on PlatformException catch (e) {
       // Handle platform-specific errors
       throw PlatformException(
-        'Failed to get sensor data: ${e.message ?? 'Unknown error'}',
+        message: 'Failed to get sensor data: ${e.message ?? 'Unknown error'}',
+        code: e.code,
       );
     } catch (e) {
       // Handle any other errors
-      throw PlatformException('Unexpected error getting sensor data: $e');
+      throw PlatformException(
+        message: 'Unexpected error getting sensor data: $e',
+        code: '',
+      );
     }
   }
 }
