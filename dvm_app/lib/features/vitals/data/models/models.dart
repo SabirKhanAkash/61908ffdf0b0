@@ -1,0 +1,1 @@
+export 'vital_log_model.dart';
