@@ -120,10 +120,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _VitalLogModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -182,10 +179,7 @@ return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'device_id')  String deviceId, @JsonKey(name: 'timestamp')  DateTime timestamp, @JsonKey(name: 'thermal_value')  double thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage)  $default,) {final _that = this;
 switch (_that) {
 case _VitalLogModel():
-return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

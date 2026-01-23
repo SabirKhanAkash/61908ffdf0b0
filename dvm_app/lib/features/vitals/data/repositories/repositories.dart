@@ -1,0 +1,1 @@
+export 'vital_repository_impl.dart';

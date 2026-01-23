@@ -11,7 +11,11 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  dartz: ^0.10.1
+  flutter_bloc: ^9.1.1
   freezed_annotation: ^3.1.0
+  get_it: ^9.2.0
+  http: ^1.6.0
   intl: ^0.20.2
   json_annotation: ^4.9.0
 
@@ -28,6 +32,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/svgs/
 
   fonts:
     - family: Schyler
