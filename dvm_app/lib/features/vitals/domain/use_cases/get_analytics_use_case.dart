@@ -4,10 +4,10 @@ import 'package:dvm_app/core/errors/errors.dart';
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:dvm_app/features/vitals/domain/repositories/repositories.dart';
 
-class GetAnalyticsUsecase implements BaseUseCase<NoParams, VitalAnalytics> {
+class GetAnalyticsUseCase implements BaseUseCase<NoParams, VitalAnalytics> {
   final VitalRepository repository;
 
-  GetAnalyticsUsecase(this.repository);
+  GetAnalyticsUseCase(this.repository);
 
   @override
   Future<Either<Failure, VitalAnalytics>> call(NoParams params) async {

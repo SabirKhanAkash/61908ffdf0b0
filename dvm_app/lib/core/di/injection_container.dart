@@ -2,7 +2,7 @@ import 'package:dvm_app/features/vitals/data/datasources/datasources.dart';
 import 'package:dvm_app/features/vitals/data/repositories/repositories.dart';
 import 'package:dvm_app/features/vitals/domain/datasources/datasources.dart';
 import 'package:dvm_app/features/vitals/domain/repositories/repositories.dart';
-import 'package:dvm_app/features/vitals/domain/usecases/usecases.dart';
+import 'package:dvm_app/features/vitals/domain/use_cases/usecases.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/analytics/analytics_cubit.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/sensor/sensor_cubit.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/vitals/vitals_cubit.dart';
@@ -20,10 +20,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory(() => AnalyticsCubit(usecase: sl()));
 
-  sl.registerLazySingleton(() => GetSensorDataUsecase(sl()));
-  sl.registerLazySingleton(() => PostVitalLogUsecase(sl()));
-  sl.registerLazySingleton(() => GetVitalsHistoryUsecase(sl()));
-  sl.registerLazySingleton(() => GetAnalyticsUsecase(sl()));
+  sl.registerLazySingleton(() => GetSensorDataUseCase(sl()));
+  sl.registerLazySingleton(() => PostVitalLogUseCase(sl()));
+  sl.registerLazySingleton(() => GetVitalsHistoryUseCase(sl()));
+  sl.registerLazySingleton(() => GetAnalyticsUseCase(sl()));
 
   sl.registerLazySingleton<VitalRepository>(
     () => VitalRepositoryImpl(remoteDataSource: sl(), platformDataSource: sl()),

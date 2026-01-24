@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DVM Prod (Release)" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/lib/main_prod.dart" />
+    <option name="additionalArgs" value="--flavor production --release" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,12 +1,12 @@
 import 'package:dvm_app/core/base/bases.dart';
-import 'package:dvm_app/features/vitals/domain/usecases/usecases.dart';
+import 'package:dvm_app/features/vitals/domain/use_cases/usecases.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'sensor_state.dart';
 
 class SensorCubit extends Cubit<SensorState> {
-  final GetSensorDataUsecase _getSensorData;
+  final GetSensorDataUseCase _getSensorData;
 
-  SensorCubit({required GetSensorDataUsecase getSensorData})
+  SensorCubit({required GetSensorDataUseCase getSensorData})
     : _getSensorData = getSensorData,
       super(const SensorState.initial());
 

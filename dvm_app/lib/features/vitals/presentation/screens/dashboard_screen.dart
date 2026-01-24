@@ -13,8 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'history_screen.dart';
 
-/// Dashboard screen - main view of the app
-/// Displays current sensor readings and allows logging to backend
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 

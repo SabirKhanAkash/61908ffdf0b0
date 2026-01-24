@@ -1,15 +1,15 @@
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
-import 'package:dvm_app/features/vitals/domain/usecases/usecases.dart';
+import 'package:dvm_app/features/vitals/domain/use_cases/usecases.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'vitals_state.dart';
 
 class VitalsCubit extends Cubit<VitalsState> {
-  final PostVitalLogUsecase _postVitalLog;
-  final GetVitalsHistoryUsecase _getVitalsHistory;
+  final PostVitalLogUseCase _postVitalLog;
+  final GetVitalsHistoryUseCase _getVitalsHistory;
 
   VitalsCubit({
-    required PostVitalLogUsecase postVitalLog,
-    required GetVitalsHistoryUsecase getVitalsHistory,
+    required PostVitalLogUseCase postVitalLog,
+    required GetVitalsHistoryUseCase getVitalsHistory,
   }) : _postVitalLog = postVitalLog,
        _getVitalsHistory = getVitalsHistory,
        super(const VitalsState.initial());

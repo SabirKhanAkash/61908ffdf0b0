@@ -1,12 +1,12 @@
 import 'package:dvm_app/core/base/bases.dart';
-import 'package:dvm_app/features/vitals/domain/usecases/usecases.dart';
+import 'package:dvm_app/features/vitals/domain/use_cases/usecases.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/analytics/analytics_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AnalyticsCubit extends Cubit<AnalyticsState> {
-  final GetAnalyticsUsecase _usecase;
+  final GetAnalyticsUseCase _usecase;
 
-  AnalyticsCubit({required GetAnalyticsUsecase usecase})
+  AnalyticsCubit({required GetAnalyticsUseCase usecase})
     : _usecase = usecase,
       super(const AnalyticsState.initial());
 

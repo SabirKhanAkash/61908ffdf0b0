@@ -4,11 +4,11 @@ import 'package:dvm_app/core/errors/errors.dart';
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:dvm_app/features/vitals/domain/repositories/repositories.dart';
 
-class GetVitalsHistoryUsecase
+class GetVitalsHistoryUseCase
     implements BaseUseCase<GetVitalsHistoryParams, List<VitalLog>> {
   final VitalRepository repository;
 
-  GetVitalsHistoryUsecase(this.repository);
+  GetVitalsHistoryUseCase(this.repository);
 
   @override
   Future<Either<Failure, List<VitalLog>>> call(
