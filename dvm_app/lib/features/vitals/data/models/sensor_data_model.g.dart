@@ -8,7 +8,7 @@ part of 'sensor_data_model.dart';
 
 _SensorDataModel _$SensorDataModelFromJson(Map<String, dynamic> json) =>
     _SensorDataModel(
-      thermalValue: (json['thermal_value'] as num).toDouble(),
+      thermalValue: (json['thermal_value'] as num).toInt(),
       batteryLevel: (json['battery_level'] as num).toDouble(),
       memoryUsage: (json['memory_usage'] as num).toDouble(),
       timestamp: DateTime.parse(json['timestamp'] as String),

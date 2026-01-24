@@ -8,7 +8,7 @@ sealed class VitalLog with _$VitalLog {
     @Default(0) int id,
     @Default('') String deviceId,
     required DateTime timestamp,
-    @Default(0.0) double thermalValue,
+    @Default(0) int thermalValue,
     @Default(0.0) double batteryLevel,
     @Default(0.0) double memoryUsage,
   }) = _VitalLog;

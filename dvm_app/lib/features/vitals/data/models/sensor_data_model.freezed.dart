@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SensorDataModel {
 
-@JsonKey(name: 'thermal_value') double get thermalValue;@JsonKey(name: 'battery_level') double get batteryLevel;@JsonKey(name: 'memory_usage') double get memoryUsage; DateTime get timestamp;
+@JsonKey(name: 'thermal_value') int get thermalValue;@JsonKey(name: 'battery_level') double get batteryLevel;@JsonKey(name: 'memory_usage') double get memoryUsage; DateTime get timestamp;
 /// Create a copy of SensorDataModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $SensorDataModelCopyWith<$Res>  {
   factory $SensorDataModelCopyWith(SensorDataModel value, $Res Function(SensorDataModel) _then) = _$SensorDataModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'thermal_value') double thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage, DateTime timestamp
+@JsonKey(name: 'thermal_value') int thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage, DateTime timestamp
 });
 
 
@@ -68,7 +68,7 @@ class _$SensorDataModelCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? thermalValue = null,Object? batteryLevel = null,Object? memoryUsage = null,Object? timestamp = null,}) {
   return _then(_self.copyWith(
 thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,
@@ -153,7 +153,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'thermal_value')  double thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage,  DateTime timestamp)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'thermal_value')  int thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage,  DateTime timestamp)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SensorDataModel() when $default != null:
 return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.timestamp);case _:
@@ -174,7 +174,7 @@ return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.ti
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'thermal_value')  double thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage,  DateTime timestamp)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'thermal_value')  int thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage,  DateTime timestamp)  $default,) {final _that = this;
 switch (_that) {
 case _SensorDataModel():
 return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.timestamp);}
@@ -191,7 +191,7 @@ return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.ti
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'thermal_value')  double thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage,  DateTime timestamp)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'thermal_value')  int thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage,  DateTime timestamp)?  $default,) {final _that = this;
 switch (_that) {
 case _SensorDataModel() when $default != null:
 return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.timestamp);case _:
@@ -209,7 +209,7 @@ class _SensorDataModel extends SensorDataModel {
   const _SensorDataModel({@JsonKey(name: 'thermal_value') required this.thermalValue, @JsonKey(name: 'battery_level') required this.batteryLevel, @JsonKey(name: 'memory_usage') required this.memoryUsage, required this.timestamp}): super._();
   factory _SensorDataModel.fromJson(Map<String, dynamic> json) => _$SensorDataModelFromJson(json);
 
-@override@JsonKey(name: 'thermal_value') final  double thermalValue;
+@override@JsonKey(name: 'thermal_value') final  int thermalValue;
 @override@JsonKey(name: 'battery_level') final  double batteryLevel;
 @override@JsonKey(name: 'memory_usage') final  double memoryUsage;
 @override final  DateTime timestamp;
@@ -247,7 +247,7 @@ abstract mixin class _$SensorDataModelCopyWith<$Res> implements $SensorDataModel
   factory _$SensorDataModelCopyWith(_SensorDataModel value, $Res Function(_SensorDataModel) _then) = __$SensorDataModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'thermal_value') double thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage, DateTime timestamp
+@JsonKey(name: 'thermal_value') int thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage, DateTime timestamp
 });
 
 
@@ -267,7 +267,7 @@ class __$SensorDataModelCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? thermalValue = null,Object? batteryLevel = null,Object? memoryUsage = null,Object? timestamp = null,}) {
   return _then(_SensorDataModel(
 thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,

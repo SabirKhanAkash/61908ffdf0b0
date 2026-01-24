@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dvm_app"
+    namespace = "com.optimizely.dvm"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,21 +20,62 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.dvm_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.optimizely.dvm"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+        }
+        create("release") {
+            // In a real app, you would provide the release keystore here.
+            // For now, we'll fall back to the debug config to fix the build error.
+            initWith(getByName("debug"))
+        }
+    }
+
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("debug") {
+            isDebuggable = true
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    flavorDimensions += "default"
+
+    productFlavors {
+        create("development") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "[DEV] DVM"
+            )
+            applicationIdSuffix = ".dev"
+        }
+        create("stage") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "[STAGE] DVM"
+            )
+            applicationIdSuffix = ".stage"
+        }
+        create("production") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "DVM"
+            )
         }
     }
 }

@@ -5,6 +5,7 @@ import 'package:dvm_app/features/vitals/domain/datasources/datasources.dart';
 import 'package:http/http.dart' as http;
 import '../models/vital_analytics_model.dart';
 import '../models/vital_log_model.dart';
+import 'package:dvm_app/core/errors/errors.dart';
 
 /// Implementation of VitalRemoteDataSource using HTTP
 class VitalRemoteDataSourceImpl implements VitalRemoteDataSource {

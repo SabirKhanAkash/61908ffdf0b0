@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VitalLog {
 
- int get id; String get deviceId; DateTime get timestamp; double get thermalValue; double get batteryLevel; double get memoryUsage;
+ int get id; String get deviceId; DateTime get timestamp; int get thermalValue; double get batteryLevel; double get memoryUsage;
 /// Create a copy of VitalLog
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $VitalLogCopyWith<$Res>  {
   factory $VitalLogCopyWith(VitalLog value, $Res Function(VitalLog) _then) = _$VitalLogCopyWithImpl;
 @useResult
 $Res call({
- int id, String deviceId, DateTime timestamp, double thermalValue, double batteryLevel, double memoryUsage
+ int id, String deviceId, DateTime timestamp, int thermalValue, double batteryLevel, double memoryUsage
 });
 
 
@@ -68,7 +68,7 @@ id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,deviceId: null == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
 as String,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,
   ));
@@ -152,7 +152,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String deviceId,  DateTime timestamp,  double thermalValue,  double batteryLevel,  double memoryUsage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String deviceId,  DateTime timestamp,  int thermalValue,  double batteryLevel,  double memoryUsage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VitalLog() when $default != null:
 return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);case _:
@@ -173,7 +173,7 @@ return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String deviceId,  DateTime timestamp,  double thermalValue,  double batteryLevel,  double memoryUsage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String deviceId,  DateTime timestamp,  int thermalValue,  double batteryLevel,  double memoryUsage)  $default,) {final _that = this;
 switch (_that) {
 case _VitalLog():
 return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);}
@@ -190,7 +190,7 @@ return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String deviceId,  DateTime timestamp,  double thermalValue,  double batteryLevel,  double memoryUsage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String deviceId,  DateTime timestamp,  int thermalValue,  double batteryLevel,  double memoryUsage)?  $default,) {final _that = this;
 switch (_that) {
 case _VitalLog() when $default != null:
 return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);case _:
@@ -205,13 +205,13 @@ return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that
 
 
 class _VitalLog implements VitalLog {
-  const _VitalLog({this.id = 0, this.deviceId = '', required this.timestamp, this.thermalValue = 0.0, this.batteryLevel = 0.0, this.memoryUsage = 0.0});
+  const _VitalLog({this.id = 0, this.deviceId = '', required this.timestamp, this.thermalValue = 0, this.batteryLevel = 0.0, this.memoryUsage = 0.0});
   
 
 @override@JsonKey() final  int id;
 @override@JsonKey() final  String deviceId;
 @override final  DateTime timestamp;
-@override@JsonKey() final  double thermalValue;
+@override@JsonKey() final  int thermalValue;
 @override@JsonKey() final  double batteryLevel;
 @override@JsonKey() final  double memoryUsage;
 
@@ -245,7 +245,7 @@ abstract mixin class _$VitalLogCopyWith<$Res> implements $VitalLogCopyWith<$Res>
   factory _$VitalLogCopyWith(_VitalLog value, $Res Function(_VitalLog) _then) = __$VitalLogCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String deviceId, DateTime timestamp, double thermalValue, double batteryLevel, double memoryUsage
+ int id, String deviceId, DateTime timestamp, int thermalValue, double batteryLevel, double memoryUsage
 });
 
 
@@ -268,7 +268,7 @@ id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,deviceId: null == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
 as String,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,
   ));

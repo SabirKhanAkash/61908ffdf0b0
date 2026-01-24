@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VitalLogModel {
 
-@JsonKey(name: 'id') int get id;@JsonKey(name: 'device_id') String get deviceId;@JsonKey(name: 'timestamp') DateTime get timestamp;@JsonKey(name: 'thermal_value') double get thermalValue;@JsonKey(name: 'battery_level') double get batteryLevel;@JsonKey(name: 'memory_usage') double get memoryUsage;
+@JsonKey(name: 'id') int get id;@JsonKey(name: 'device_id') String get deviceId;@JsonKey(name: 'timestamp') DateTime get timestamp;@JsonKey(name: 'thermal_value') int get thermalValue;@JsonKey(name: 'battery_level') double get batteryLevel;@JsonKey(name: 'memory_usage') double get memoryUsage;
 /// Create a copy of VitalLogModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $VitalLogModelCopyWith<$Res>  {
   factory $VitalLogModelCopyWith(VitalLogModel value, $Res Function(VitalLogModel) _then) = _$VitalLogModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'id') int id,@JsonKey(name: 'device_id') String deviceId,@JsonKey(name: 'timestamp') DateTime timestamp,@JsonKey(name: 'thermal_value') double thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage
+@JsonKey(name: 'id') int id,@JsonKey(name: 'device_id') String deviceId,@JsonKey(name: 'timestamp') DateTime timestamp,@JsonKey(name: 'thermal_value') int thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage
 });
 
 
@@ -71,7 +71,7 @@ id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,deviceId: null == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
 as String,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,
   ));
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'device_id')  String deviceId, @JsonKey(name: 'timestamp')  DateTime timestamp, @JsonKey(name: 'thermal_value')  double thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'device_id')  String deviceId, @JsonKey(name: 'timestamp')  DateTime timestamp, @JsonKey(name: 'thermal_value')  int thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VitalLogModel() when $default != null:
 return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);case _:
@@ -176,7 +176,7 @@ return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'device_id')  String deviceId, @JsonKey(name: 'timestamp')  DateTime timestamp, @JsonKey(name: 'thermal_value')  double thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'device_id')  String deviceId, @JsonKey(name: 'timestamp')  DateTime timestamp, @JsonKey(name: 'thermal_value')  int thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage)  $default,) {final _that = this;
 switch (_that) {
 case _VitalLogModel():
 return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);}
@@ -193,7 +193,7 @@ return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'device_id')  String deviceId, @JsonKey(name: 'timestamp')  DateTime timestamp, @JsonKey(name: 'thermal_value')  double thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'device_id')  String deviceId, @JsonKey(name: 'timestamp')  DateTime timestamp, @JsonKey(name: 'thermal_value')  int thermalValue, @JsonKey(name: 'battery_level')  double batteryLevel, @JsonKey(name: 'memory_usage')  double memoryUsage)?  $default,) {final _that = this;
 switch (_that) {
 case _VitalLogModel() when $default != null:
 return $default(_that.id,_that.deviceId,_that.timestamp,_that.thermalValue,_that.batteryLevel,_that.memoryUsage);case _:
@@ -214,7 +214,7 @@ class _VitalLogModel extends VitalLogModel {
 @override@JsonKey(name: 'id') final  int id;
 @override@JsonKey(name: 'device_id') final  String deviceId;
 @override@JsonKey(name: 'timestamp') final  DateTime timestamp;
-@override@JsonKey(name: 'thermal_value') final  double thermalValue;
+@override@JsonKey(name: 'thermal_value') final  int thermalValue;
 @override@JsonKey(name: 'battery_level') final  double batteryLevel;
 @override@JsonKey(name: 'memory_usage') final  double memoryUsage;
 
@@ -251,7 +251,7 @@ abstract mixin class _$VitalLogModelCopyWith<$Res> implements $VitalLogModelCopy
   factory _$VitalLogModelCopyWith(_VitalLogModel value, $Res Function(_VitalLogModel) _then) = __$VitalLogModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'id') int id,@JsonKey(name: 'device_id') String deviceId,@JsonKey(name: 'timestamp') DateTime timestamp,@JsonKey(name: 'thermal_value') double thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage
+@JsonKey(name: 'id') int id,@JsonKey(name: 'device_id') String deviceId,@JsonKey(name: 'timestamp') DateTime timestamp,@JsonKey(name: 'thermal_value') int thermalValue,@JsonKey(name: 'battery_level') double batteryLevel,@JsonKey(name: 'memory_usage') double memoryUsage
 });
 
 
@@ -274,7 +274,7 @@ id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,deviceId: null == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
 as String,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,
   ));

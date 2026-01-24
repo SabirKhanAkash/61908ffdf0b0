@@ -14,7 +14,7 @@ sealed class VitalLogModel with _$VitalLogModel {
     @JsonKey(name: 'id') required int id,
     @JsonKey(name: 'device_id') required String deviceId,
     @JsonKey(name: 'timestamp') required DateTime timestamp,
-    @JsonKey(name: 'thermal_value') required double thermalValue,
+    @JsonKey(name: 'thermal_value') required int thermalValue,
     @JsonKey(name: 'battery_level') required double batteryLevel,
     @JsonKey(name: 'memory_usage') required double memoryUsage,
   }) = _VitalLogModel;

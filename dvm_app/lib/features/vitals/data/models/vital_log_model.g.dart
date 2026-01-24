@@ -11,7 +11,7 @@ _VitalLogModel _$VitalLogModelFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       deviceId: json['device_id'] as String,
       timestamp: DateTime.parse(json['timestamp'] as String),
-      thermalValue: (json['thermal_value'] as num).toDouble(),
+      thermalValue: (json['thermal_value'] as num).toInt(),
       batteryLevel: (json['battery_level'] as num).toDouble(),
       memoryUsage: (json['memory_usage'] as num).toDouble(),
     );

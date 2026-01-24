@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SensorData {
 
- double get thermalValue;// 0-3
+ int get thermalValue;// 0-3
  double get batteryLevel;// 0-100
  double get memoryUsage;// 0-100
  DateTime get timestamp;
@@ -48,7 +48,7 @@ abstract mixin class $SensorDataCopyWith<$Res>  {
   factory $SensorDataCopyWith(SensorData value, $Res Function(SensorData) _then) = _$SensorDataCopyWithImpl;
 @useResult
 $Res call({
- double thermalValue, double batteryLevel, double memoryUsage, DateTime timestamp
+ int thermalValue, double batteryLevel, double memoryUsage, DateTime timestamp
 });
 
 
@@ -68,7 +68,7 @@ class _$SensorDataCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? thermalValue = null,Object? batteryLevel = null,Object? memoryUsage = null,Object? timestamp = null,}) {
   return _then(_self.copyWith(
 thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,
@@ -153,7 +153,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double thermalValue,  double batteryLevel,  double memoryUsage,  DateTime timestamp)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int thermalValue,  double batteryLevel,  double memoryUsage,  DateTime timestamp)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SensorData() when $default != null:
 return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.timestamp);case _:
@@ -174,7 +174,7 @@ return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.ti
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double thermalValue,  double batteryLevel,  double memoryUsage,  DateTime timestamp)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int thermalValue,  double batteryLevel,  double memoryUsage,  DateTime timestamp)  $default,) {final _that = this;
 switch (_that) {
 case _SensorData():
 return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.timestamp);}
@@ -191,7 +191,7 @@ return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.ti
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double thermalValue,  double batteryLevel,  double memoryUsage,  DateTime timestamp)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int thermalValue,  double batteryLevel,  double memoryUsage,  DateTime timestamp)?  $default,) {final _that = this;
 switch (_that) {
 case _SensorData() when $default != null:
 return $default(_that.thermalValue,_that.batteryLevel,_that.memoryUsage,_that.timestamp);case _:
@@ -209,7 +209,7 @@ class _SensorData implements SensorData {
   const _SensorData({required this.thermalValue, required this.batteryLevel, required this.memoryUsage, required this.timestamp});
   
 
-@override final  double thermalValue;
+@override final  int thermalValue;
 // 0-3
 @override final  double batteryLevel;
 // 0-100
@@ -247,7 +247,7 @@ abstract mixin class _$SensorDataCopyWith<$Res> implements $SensorDataCopyWith<$
   factory _$SensorDataCopyWith(_SensorData value, $Res Function(_SensorData) _then) = __$SensorDataCopyWithImpl;
 @override @useResult
 $Res call({
- double thermalValue, double batteryLevel, double memoryUsage, DateTime timestamp
+ int thermalValue, double batteryLevel, double memoryUsage, DateTime timestamp
 });
 
 
@@ -267,7 +267,7 @@ class __$SensorDataCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? thermalValue = null,Object? batteryLevel = null,Object? memoryUsage = null,Object? timestamp = null,}) {
   return _then(_SensorData(
 thermalValue: null == thermalValue ? _self.thermalValue : thermalValue // ignore: cast_nullable_to_non_nullable
-as double,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
 as double,memoryUsage: null == memoryUsage ? _self.memoryUsage : memoryUsage // ignore: cast_nullable_to_non_nullable
 as double,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,

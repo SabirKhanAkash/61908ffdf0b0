@@ -6,7 +6,6 @@ import 'package:dvm_app/features/vitals/data/models/models.dart';
 import 'package:dvm_app/features/vitals/domain/repositories/repositories.dart';
 import 'package:flutter/services.dart';
 
-/// Implementation of VitalRepository
 class VitalRepositoryImpl implements VitalRepository {
   final VitalRemoteDataSource remoteDataSource;
   final VitalPlatformDataSource platformDataSource;
@@ -16,17 +15,17 @@ class VitalRepositoryImpl implements VitalRepository {
     required this.platformDataSource,
   });
 
-  // @override
-  // Future<Either<Failure, SensorData>> getCurrentSensorData() async {
-  //   try {
-  //     final sensorData = await platformDataSource.getSensorData();
-  //     return Right(sensorData.toEntity());
-  //   } on PlatformException catch (e) {
-  //     return Left(Failure.platform(e.message));
-  //   } catch (e) {
-  //     return Left(Failure.unknown('Failed to get sensor data: $e'));
-  //   }
-  // }
+  @override
+  Future<Either<Failure, SensorData>> getCurrentSensorData() async {
+    try {
+      final sensorData = await platformDataSource.getSensorData();
+      return Right(sensorData.toEntity());
+    } on PlatformException catch (e) {
+      return Left(Failure.platform(e.message));
+    } catch (e) {
+      return Left(Failure.unknown('Failed to get sensor data: $e'));
+    }
+  }
 
   @override
   Future<Either<Failure, void>> postVitalLog(VitalLog log) async {
