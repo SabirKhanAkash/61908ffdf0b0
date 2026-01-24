@@ -29,7 +29,7 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            storeFile = file("debug.keystore")
+//            storeFile = file("debug.keystore")
         }
         create("release") {
             // In a real app, you would provide the release keystore here.

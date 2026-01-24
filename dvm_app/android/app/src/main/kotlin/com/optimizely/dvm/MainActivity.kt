@@ -1,4 +1,4 @@
-package com.example.dvm_app
+package com.optimizely.dvm_app
 
 import io.flutter.embedding.android.FlutterActivity
 
