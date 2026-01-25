@@ -1,9 +1,7 @@
+import 'package:dvm_app/core/utils/utils.dart';
+import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/utils/date_formatter.dart';
-import '../../../../core/utils/thermal_mapper.dart';
-import '../../domain/entities/vital_log.dart';
 
-/// Widget to display a single vital log entry
 class VitalLogTile extends StatelessWidget {
   final VitalLog log;
 

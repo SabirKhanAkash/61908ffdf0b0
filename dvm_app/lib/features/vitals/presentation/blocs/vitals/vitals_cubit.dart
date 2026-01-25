@@ -25,7 +25,7 @@ class VitalsCubit extends Cubit<VitalsState> {
     );
   }
 
-  Future<void> fetchHistory({int limit = 100}) async {
+  Future<void> getHistory({int limit = 100}) async {
     emit(const VitalsState.loadingHistory());
 
     final result = await _getVitalsHistory.call(
@@ -39,7 +39,7 @@ class VitalsCubit extends Cubit<VitalsState> {
   }
 
   Future<void> refresh({int limit = 100}) async {
-    await fetchHistory(limit: limit);
+    await getHistory(limit: limit);
   }
 
   void reset() {

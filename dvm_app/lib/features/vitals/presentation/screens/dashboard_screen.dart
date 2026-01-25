@@ -115,7 +115,6 @@ class _DashboardView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Sensor Data Section
                 BlocBuilder<SensorCubit, SensorState>(
                   builder: (context, state) {
                     return state.when(
@@ -125,6 +124,7 @@ class _DashboardView extends StatelessWidget {
                           const Loader(message: 'Fetching sensor data...'),
                       success: (data) => Column(
                         children: [
+                          /// Thermal State
                           SensorCard(
                             title: 'Thermal State',
                             value: data.thermalValue.toString(),
@@ -134,7 +134,7 @@ class _DashboardView extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
 
-                          // Battery Level
+                          /// Battery Level
                           SensorCard(
                             title: 'Battery Level',
                             value: '${data.batteryLevel.toStringAsFixed(0)}%',
@@ -144,7 +144,7 @@ class _DashboardView extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
 
-                          // Memory Usage
+                          /// Memory Usage
                           SensorCard(
                             title: 'Memory Usage',
                             value: '${data.memoryUsage.toStringAsFixed(0)}%',
@@ -154,14 +154,12 @@ class _DashboardView extends StatelessWidget {
                           ),
                           const SizedBox(height: 24),
 
-                          // Action Buttons
+                          /// Action Buttons
                           Row(
                             children: [
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    context.read<SensorCubit>().refresh();
-                                  },
+                                  onPressed: () => context.read<SensorCubit>().refresh(),
                                   icon: const Icon(Icons.refresh),
                                   label: const Text('Refresh'),
                                   style: ElevatedButton.styleFrom(
@@ -172,9 +170,8 @@ class _DashboardView extends StatelessWidget {
                               const SizedBox(width: 16),
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    _logCurrentStatus(context, data);
-                                  },
+                                  onPressed: () =>
+                                      _logCurrentStatus(context, data),
                                   icon: const Icon(Icons.upload),
                                   label: const Text('Log Status'),
                                   style: ElevatedButton.styleFrom(
@@ -210,7 +207,7 @@ class _DashboardView extends StatelessWidget {
 
     final log = VitalLog(
       deviceId: deviceId,
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now().toUtc(),
       thermalValue: sensorData.thermalValue,
       batteryLevel: sensorData.batteryLevel,
       memoryUsage: sensorData.memoryUsage,

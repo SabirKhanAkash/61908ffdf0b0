@@ -17,7 +17,7 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => sl<VitalsCubit>()..fetchHistory()),
+        BlocProvider(create: (_) => sl<VitalsCubit>()..getHistory()),
         BlocProvider(create: (_) => sl<AnalyticsCubit>()..getAnalytics()),
       ],
       child: const _HistoryView(),

@@ -11,11 +11,11 @@ class DateFormatter {
     bool excludeTime = false,
   }) {
     if (!excludeDate && !excludeTime) {
-      return DateFormat('MMM dd, yyyy hh:mm a').format(dateTime);
+      return DateFormat('MMM dd, yyyy hh:mm a').format(dateTime.toLocal());
     } else if (excludeTime) {
-      return DateFormat('MMM dd, yyyy').format(dateTime);
+      return DateFormat('MMM dd, yyyy').format(dateTime.toLocal());
     } else if (excludeDate) {
-      return DateFormat('hh:mm a').format(dateTime);
+      return DateFormat('hh:mm a').format(dateTime.toLocal());
     }
     return '';
   }
@@ -33,7 +33,7 @@ class DateFormatter {
   /// Get relative time (e.g., "2 minutes ago")
   static String getRelativeTime(DateTime dateTime) {
     final now = DateTime.now();
-    final difference = now.difference(dateTime);
+    final difference = now.difference(dateTime.toLocal());
 
     if (difference.inSeconds < 60) {
       return 'Just now';
