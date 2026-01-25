@@ -4,19 +4,13 @@ import 'package:dvm_app/core/errors/errors.dart';
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:dvm_app/features/vitals/domain/repositories/repositories.dart';
 
-class PostVitalLogUseCase implements BaseUseCase<PostVitalLogParams, void> {
+class PostVitalLogUseCase implements BaseUseCase<VitalLog, void> {
   final VitalRepository repository;
 
   PostVitalLogUseCase(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(PostVitalLogParams params) async {
-    return await repository.postVitalLog(params.log);
+  Future<Either<Failure, void>> call(VitalLog log) async {
+    return await repository.postVitalLog(log);
   }
-}
-
-class PostVitalLogParams {
-  final VitalLog log;
-
-  const PostVitalLogParams({required this.log});
 }

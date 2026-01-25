@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dvm_app/core/errors/errors.dart';
-import 'package:dvm_app/features/vitals/domain/datasources/datasources.dart';
+import 'package:dvm_app/features/vitals/domain/data_sources/data_sources.dart';
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
-import 'package:dvm_app/features/vitals/data/models/models.dart';
 import 'package:dvm_app/features/vitals/domain/repositories/repositories.dart';
 import 'package:flutter/services.dart';
 
@@ -19,7 +18,7 @@ class VitalRepositoryImpl implements VitalRepository {
   Future<Either<Failure, SensorData>> getCurrentSensorData() async {
     try {
       final sensorData = await platformDataSource.getSensorData();
-      return Right(sensorData.toEntity());
+      return Right(sensorData);
     } on PlatformException catch (e) {
       return Left(Failure.platform(e.message));
     } catch (e) {
@@ -30,8 +29,7 @@ class VitalRepositoryImpl implements VitalRepository {
   @override
   Future<Either<Failure, void>> postVitalLog(VitalLog log) async {
     try {
-      final logModel = VitalLogModel.fromEntity(log);
-      await remoteDataSource.postVitalLog(logModel);
+      await remoteDataSource.postVitalLog(log);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(Failure.server(e.message));
@@ -48,9 +46,7 @@ class VitalRepositoryImpl implements VitalRepository {
   }) async {
     try {
       final vitals = await remoteDataSource.getVitals(limit: limit);
-      // Convert models to entities
-      final entities = vitals.map((model) => model.toEntity()).toList();
-      return Right(entities);
+      return Right(vitals);
     } on ServerException catch (e) {
       return Left(Failure.server(e.message));
     } on NetworkException catch (e) {
@@ -64,7 +60,7 @@ class VitalRepositoryImpl implements VitalRepository {
   Future<Either<Failure, VitalAnalytics>> getAnalytics() async {
     try {
       final analytics = await remoteDataSource.getAnalytics();
-      return Right(analytics.toEntity());
+      return Right(analytics);
     } on ServerException catch (e) {
       return Left(Failure.server(e.message));
     } on NetworkException catch (e) {

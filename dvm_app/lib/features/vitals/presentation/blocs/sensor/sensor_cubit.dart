@@ -4,16 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'sensor_state.dart';
 
 class SensorCubit extends Cubit<SensorState> {
-  final GetSensorDataUseCase _getSensorData;
+  final GetSensorDataUseCase _useCase;
 
-  SensorCubit({required GetSensorDataUseCase getSensorData})
-    : _getSensorData = getSensorData,
+  SensorCubit({required GetSensorDataUseCase useCase})
+    : _useCase = useCase,
       super(const SensorState.initial());
 
   Future<void> getSensorData() async {
     emit(const SensorState.loading());
 
-    final result = await _getSensorData(const NoParams());
+    final result = await _useCase.call(NoParams());
 
     result.fold(
       (failure) => emit(SensorState.failure(failure)),

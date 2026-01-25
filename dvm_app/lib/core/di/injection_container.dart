@@ -1,6 +1,6 @@
-import 'package:dvm_app/features/vitals/data/datasources/datasources.dart';
-import 'package:dvm_app/features/vitals/data/repositories/repositories.dart';
-import 'package:dvm_app/features/vitals/domain/datasources/datasources.dart';
+import 'package:dvm_app/features/vitals/data/data_sources_impl/data_sources_impl.dart';
+import 'package:dvm_app/features/vitals/data/repositories_impl/repositories_impl.dart';
+import 'package:dvm_app/features/vitals/domain/data_sources/data_sources.dart';
 import 'package:dvm_app/features/vitals/domain/repositories/repositories.dart';
 import 'package:dvm_app/features/vitals/domain/use_cases/usecases.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/analytics/analytics_cubit.dart';
@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
-  sl.registerFactory(() => SensorCubit(getSensorData: sl()));
+  sl.registerFactory(() => SensorCubit(useCase: sl()));
 
   sl.registerFactory(
     () => VitalsCubit(postVitalLog: sl(), getVitalsHistory: sl()),

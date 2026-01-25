@@ -206,10 +206,8 @@ class _DashboardView extends StatelessWidget {
   }
 
   void _logCurrentStatus(BuildContext context, dynamic sensorData) {
-    // Get device ID
     final deviceId = _getDeviceId();
 
-    // Create vital log
     final log = VitalLog(
       deviceId: deviceId,
       timestamp: DateTime.now(),
@@ -218,13 +216,10 @@ class _DashboardView extends StatelessWidget {
       memoryUsage: sensorData.memoryUsage,
     );
 
-    // Post to backend
     context.read<VitalsCubit>().postLog(log);
   }
 
   String _getDeviceId() {
-    // Use platform-specific device identifier
-    // For demo purposes, using a simple identifier
     if (Platform.isAndroid) {
       return 'android-${DateTime.now().millisecondsSinceEpoch}';
     } else if (Platform.isIOS) {
@@ -251,12 +246,14 @@ class _DashboardView extends StatelessWidget {
 
   Color _getBatteryColor(double batteryLevel) {
     if (batteryLevel > 60) return Colors.green;
+    if (batteryLevel > 40) return Colors.yellow;
     if (batteryLevel > 20) return Colors.orange;
     return Colors.red;
   }
 
   Color _getMemoryColor(double memoryUsage) {
     if (memoryUsage < 60) return Colors.green;
+    if (memoryUsage < 70) return Colors.yellow;
     if (memoryUsage < 80) return Colors.orange;
     return Colors.red;
   }

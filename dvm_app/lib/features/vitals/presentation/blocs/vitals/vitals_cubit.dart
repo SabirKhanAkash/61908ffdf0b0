@@ -17,7 +17,7 @@ class VitalsCubit extends Cubit<VitalsState> {
   Future<void> postLog(VitalLog log) async {
     emit(const VitalsState.posting());
 
-    final result = await _postVitalLog(PostVitalLogParams(log: log));
+    final result = await _postVitalLog.call(log);
 
     result.fold(
       (failure) => emit(VitalsState.error(failure)),
@@ -28,7 +28,7 @@ class VitalsCubit extends Cubit<VitalsState> {
   Future<void> fetchHistory({int limit = 100}) async {
     emit(const VitalsState.loadingHistory());
 
-    final result = await _getVitalsHistory(
+    final result = await _getVitalsHistory.call(
       GetVitalsHistoryParams(limit: limit),
     );
 
