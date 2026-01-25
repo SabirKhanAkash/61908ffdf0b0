@@ -56,7 +56,7 @@ class _HistoryView extends StatelessWidget {
                       child: Loader(message: 'Loading analytics...'),
                     ),
                     success: (analytics) => _buildAnalyticsCard(analytics),
-                    failure: (message) => Padding(
+                    failure: (error) => Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Card(
                         color: Colors.red[50],
@@ -68,7 +68,7 @@ class _HistoryView extends StatelessWidget {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  'Analytics: $message',
+                                  'Analytics: ${error.message}',
                                   style: TextStyle(color: Colors.red[700]),
                                 ),
                               ),

@@ -108,9 +108,7 @@ class _DashboardView extends StatelessWidget {
           );
         },
         child: RefreshIndicator(
-          onRefresh: () async {
-            await context.read<SensorCubit>().refresh();
-          },
+          onRefresh: () async => await context.read<SensorCubit>().refresh(),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
