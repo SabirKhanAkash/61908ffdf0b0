@@ -15,7 +15,7 @@ class Env {
 
   static const dev = Env(
     flavorName: 'dev',
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://192.168.0.164:3000',
     enableLogging: true,
     connectionTimeout: 10,
     receiveTimeout: 10,
@@ -31,7 +31,7 @@ class Env {
 
   static const prod = Env(
     flavorName: 'prod',
-    baseUrl: 'https://61908ffdf0b0-sabir-khan-akashs-projects.vercel.app',
+    baseUrl: 'https://61908ffdf0b0-hz2tkh5uj-sabir-khan-akashs-projects.vercel.app',
     enableLogging: false,
     connectionTimeout: 5,
     receiveTimeout: 5,

@@ -66,6 +66,39 @@ class MockVitalRepository {
         return this.logs.filter(log => log.device_id === deviceId).slice(-limit).reverse();
     }
 
+    async getMinMax(since?: string): Promise<{
+        thermal: { min: number; max: number };
+        battery: { min: number; max: number };
+        memory: { min: number; max: number };
+    }> {
+        const filteredLogs = since
+            ? this.logs.filter(log => log.timestamp >= since)
+            : this.logs;
+
+        if (filteredLogs.length === 0) {
+            return {
+                thermal: { min: 0, max: 0 },
+                battery: { min: 0, max: 0 },
+                memory: { min: 0, max: 0 }
+            };
+        }
+
+        return {
+            thermal: {
+                min: Math.min(...filteredLogs.map(l => l.thermal_value)),
+                max: Math.max(...filteredLogs.map(l => l.thermal_value))
+            },
+            battery: {
+                min: Math.min(...filteredLogs.map(l => l.battery_level)),
+                max: Math.max(...filteredLogs.map(l => l.battery_level))
+            },
+            memory: {
+                min: Math.min(...filteredLogs.map(l => l.memory_usage)),
+                max: Math.max(...filteredLogs.map(l => l.memory_usage))
+            }
+        };
+    }
+
     async reset() {
         this.logs = [];
         this.nextId = 1;
@@ -180,7 +213,7 @@ describe('VitalService', () => {
     });
 
     describe('getAnalytics', () => {
-        it('should calculate correct rolling average', async () => {
+        it('should calculate correct rolling average and min/max', async () => {
             // Add test data
             await service.createVitalLog({
                 device_id: 'device-1',
@@ -203,15 +236,23 @@ describe('VitalService', () => {
             expect(analytics.rolling_average.thermal).toBe(1); // (0 + 2) / 2
             expect(analytics.rolling_average.battery).toBe(70); // (80 + 60) / 2
             expect(analytics.rolling_average.memory).toBe(60); // (50 + 70) / 2
+
+            expect(analytics.min_max.all_time.thermal).toEqual({ min: 0, max: 2 });
+            expect(analytics.min_max.all_time.battery).toEqual({ min: 60, max: 80 });
+            expect(analytics.min_max.all_time.memory).toEqual({ min: 50, max: 70 });
+
             expect(analytics.total_logs).toBe(2);
         });
 
-        it('should return zero averages when no data', async () => {
+        it('should return zero values when no data', async () => {
             const analytics = await service.getAnalytics();
 
             expect(analytics.rolling_average.thermal).toBe(0);
             expect(analytics.rolling_average.battery).toBe(0);
             expect(analytics.rolling_average.memory).toBe(0);
+
+            expect(analytics.min_max.all_time.thermal).toEqual({ min: 0, max: 0 });
+
             expect(analytics.total_logs).toBe(0);
         });
     });

@@ -102,6 +102,46 @@ export class VitalRepository {
         };
     }
 
+    async getMinMax(since?: string): Promise<{
+        thermal: { min: number; max: number };
+        battery: { min: number; max: number };
+        memory: { min: number; max: number };
+    }> {
+        const sql = since
+            ? `SELECT 
+                MIN(thermal_value) as min_thermal, MAX(thermal_value) as max_thermal,
+                MIN(battery_level) as min_battery, MAX(battery_level) as max_battery,
+                MIN(memory_usage) as min_memory, MAX(memory_usage) as max_memory
+               FROM vitals WHERE timestamp >= ?`
+            : `SELECT 
+                MIN(thermal_value) as min_thermal, MAX(thermal_value) as max_thermal,
+                MIN(battery_level) as min_battery, MAX(battery_level) as max_battery,
+                MIN(memory_usage) as min_memory, MAX(memory_usage) as max_memory
+               FROM vitals`;
+
+        const result = await this.db.execute({
+            sql,
+            args: since ? [since] : []
+        });
+
+        const row = result.rows[0];
+
+        return {
+            thermal: {
+                min: row.min_thermal !== null ? (row.min_thermal as number) : 0,
+                max: row.max_thermal !== null ? (row.max_thermal as number) : 0
+            },
+            battery: {
+                min: row.min_battery !== null ? (row.min_battery as number) : 0,
+                max: row.max_battery !== null ? (row.max_battery as number) : 0
+            },
+            memory: {
+                min: row.min_memory !== null ? (row.min_memory as number) : 0,
+                max: row.max_memory !== null ? (row.max_memory as number) : 0
+            }
+        };
+    }
+
     async deleteAll(): Promise<void> {
         await this.db.execute('DELETE FROM vitals');
     }

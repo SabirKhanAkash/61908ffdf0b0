@@ -48,15 +48,39 @@ export class VitalService {
     }
 
     async getAnalytics(): Promise<VitalAnalytics> {
-        const [rollingAverage, totalLogs, deviceCount, timeRange] = await Promise.all([
+        const now = new Date();
+        const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
+        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+        const [
+            rollingAverage,
+            totalLogs,
+            deviceCount,
+            timeRange,
+            minMaxAll,
+            minMaxHour,
+            minMaxDay,
+            minMaxWeek
+        ] = await Promise.all([
             this.repository.calculateRollingAverage(100),
             this.repository.count(),
             this.repository.countDevices(),
-            this.repository.getTimeRange()
+            this.repository.getTimeRange(),
+            this.repository.getMinMax(),
+            this.repository.getMinMax(oneHourAgo),
+            this.repository.getMinMax(oneDayAgo),
+            this.repository.getMinMax(oneWeekAgo)
         ]);
 
         const analytics: VitalAnalytics = {
             rolling_average: rollingAverage,
+            min_max: {
+                all_time: minMaxAll,
+                last_hour: minMaxHour,
+                last_day: minMaxDay,
+                last_week: minMaxWeek,
+            },
             total_logs: totalLogs,
             latest_timestamp: timeRange.latest,
             device_count: deviceCount,

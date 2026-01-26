@@ -10,6 +10,7 @@ import 'package:dvm_app/features/vitals/presentation/widgets/error_display.dart'
 import 'package:dvm_app/features/vitals/presentation/widgets/loader.dart';
 import 'package:dvm_app/features/vitals/presentation/widgets/sensor_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'history_screen.dart';
 
@@ -28,26 +29,98 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-class _DashboardView extends StatelessWidget {
+class _DashboardView extends StatefulWidget {
   const _DashboardView();
+
+  @override
+  State<_DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<_DashboardView>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  static const int REFRESH_INTERVAL = 15;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: REFRESH_INTERVAL),
+    );
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (mounted) {
+          context.read<SensorCubit>().refresh();
+          context.read<SensorCubit>().state.maybeWhen(
+            success: (data) {
+              _logCurrentStatus(context, data);
+            },
+            orElse: () {},
+          );
+          _animationController.forward(from: 0.0);
+        }
+      }
+    });
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Device Vitals Monitor'),
+        title: const Text(
+          'Device Vitals',
+          style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.5),
+        ),
         centerTitle: true,
         elevation: 0,
+        backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.history),
-            tooltip: 'View History',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const HistoryScreen()),
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                final progress = 1.0 - _animationController.value;
+                final seconds = (progress * REFRESH_INTERVAL).ceil();
+
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 2.5,
+                        backgroundColor: Colors.indigo.withValues(alpha: 0.1),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.indigo.shade400,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '$seconds',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.indigo.shade600,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -57,34 +130,47 @@ class _DashboardView extends StatelessWidget {
             initial: () {},
             posting: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Row(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  content: const Row(
                     children: [
                       SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
                       ),
                       SizedBox(width: 16),
-                      Text('Logging vitals...'),
+                      Text('Recording vitals...'),
                     ],
                   ),
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
             posted: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Row(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  content: const Row(
                     children: [
-                      Icon(Icons.check_circle, color: Colors.white),
+                      Icon(Icons.check_circle_rounded, color: Colors.white),
                       SizedBox(width: 16),
-                      Text('Vitals logged successfully!'),
+                      Text('Vitals logged successfully'),
                     ],
                   ),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 2),
+                  backgroundColor: Colors.green[600],
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
@@ -93,14 +179,21 @@ class _DashboardView extends StatelessWidget {
             error: (error) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   content: Row(
                     children: [
-                      const Icon(Icons.error, color: Colors.white),
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 16),
                       Expanded(child: Text(error.message.toString())),
                     ],
                   ),
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.red[600],
                   duration: const Duration(seconds: 3),
                 ),
               );
@@ -108,76 +201,133 @@ class _DashboardView extends StatelessWidget {
           );
         },
         child: RefreshIndicator(
-          onRefresh: () async => await context.read<SensorCubit>().refresh(),
+          onRefresh: () async {
+            _animationController.forward(from: 0.0);
+            await context.read<SensorCubit>().refresh();
+          },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 BlocBuilder<SensorCubit, SensorState>(
                   builder: (context, state) {
                     return state.when(
-                      initial: () =>
-                          const Center(child: Text('Pull down to refresh')),
-                      loading: () =>
-                          const Loader(message: 'Fetching sensor data...'),
-                      success: (data) => Column(
+                      initial: () => const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 40),
+                          child: Text(
+                            'Pull down to refresh',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                      loading: () => const Padding(
+                        padding: EdgeInsets.only(top: 40),
+                        child: Loader(message: 'Analyzing hardware...'),
+                      ),
+                      success: (SensorData data) => Column(
                         children: [
-                          /// Thermal State
+                          /// Primary: Thermal State
                           SensorCard(
-                            title: 'Thermal State',
-                            value: data.thermalValue.toString(),
-                            subtitle: ThermalMapper.getLabel(data.thermalValue),
-                            icon: Icons.thermostat,
+                            isPrimary: true,
+                            title: 'Thermal Health',
+                            value: ThermalMapper.getLabel(data.thermalValue),
+                            subtitle: 'Value identifier: ${data.thermalValue}',
+                            icon: Icons.thermostat_rounded,
                             color: _getThermalColor(data.thermalValue),
+                            onAction: () {
+                              _animationController.forward(from: 0.0);
+                              context.read<SensorCubit>().refresh();
+                            },
+                            actionIcon: Icons.refresh_rounded,
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 20),
 
-                          /// Battery Level
-                          SensorCard(
-                            title: 'Battery Level',
-                            value: '${data.batteryLevel.toStringAsFixed(0)}%',
-                            subtitle: 'Remaining charge',
-                            icon: Icons.battery_full,
-                            color: _getBatteryColor(data.batteryLevel),
-                          ),
-                          const SizedBox(height: 16),
-
-                          /// Memory Usage
-                          SensorCard(
-                            title: 'Memory Usage',
-                            value: '${data.memoryUsage.toStringAsFixed(0)}%',
-                            subtitle: 'RAM in use',
-                            icon: Icons.memory,
-                            color: _getMemoryColor(data.memoryUsage),
+                          /// Secondary: Battery & Memory Grid
+                          Row(
+                            children: [
+                              Expanded(
+                                child: SensorCard(
+                                  title: 'Battery',
+                                  value:
+                                      '${data.batteryLevel.toStringAsFixed(0)}%',
+                                  subtitle: 'Energy',
+                                  icon: Icons.bolt_rounded,
+                                  color: _getBatteryColor(data.batteryLevel),
+                                  progress: data.batteryLevel / 100,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: SensorCard(
+                                  title: 'Memory',
+                                  value:
+                                      '${data.memoryUsage.toStringAsFixed(0)}%',
+                                  subtitle: 'RAM Use',
+                                  icon: Icons.memory_rounded,
+                                  color: _getMemoryColor(data.memoryUsage),
+                                  progress: data.memoryUsage / 100,
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 24),
+
+                          /// History & Analytics Tile
+                          _buildHistoryTile(context),
+                          const SizedBox(height: 32),
 
                           /// Action Buttons
                           Row(
                             children: [
                               Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () => context.read<SensorCubit>().refresh(),
-                                  icon: const Icon(Icons.refresh),
-                                  label: const Text('Refresh'),
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(16),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.green.withValues(
+                                          alpha: 0.25,
+                                        ),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 8),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () =>
-                                      _logCurrentStatus(context, data),
-                                  icon: const Icon(Icons.upload),
-                                  label: const Text('Log Status'),
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(16),
-                                    backgroundColor: Colors.green,
-                                    foregroundColor: Colors.white,
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        _logCurrentStatus(context, data),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green[600],
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 18,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.cloud_upload_rounded),
+                                        SizedBox(width: 12),
+                                        Text(
+                                          'PERSIST LOG NOW',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: 1,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -202,7 +352,7 @@ class _DashboardView extends StatelessWidget {
     );
   }
 
-  void _logCurrentStatus(BuildContext context, dynamic sensorData) {
+  void _logCurrentStatus(BuildContext context, SensorData sensorData) {
     final deviceId = _getDeviceId();
 
     final log = VitalLog(
@@ -229,29 +379,114 @@ class _DashboardView extends StatelessWidget {
   Color _getThermalColor(int thermalValue) {
     switch (thermalValue) {
       case 0:
-        return Colors.green;
+        return Colors.green[600]!;
       case 1:
-        return Colors.yellow[700]!;
+        return Colors.yellow[800]!;
       case 2:
-        return Colors.orange;
+        return Colors.orange[700]!;
       case 3:
-        return Colors.red;
+        return Colors.red[700]!;
       default:
         return Colors.grey;
     }
   }
 
   Color _getBatteryColor(double batteryLevel) {
-    if (batteryLevel > 60) return Colors.green;
-    if (batteryLevel > 40) return Colors.yellow;
-    if (batteryLevel > 20) return Colors.orange;
-    return Colors.red;
+    if (batteryLevel > 60) return Colors.teal[600]!;
+    if (batteryLevel > 40) return Colors.amber[700]!;
+    if (batteryLevel > 20) return Colors.orange[700]!;
+    return Colors.red[600]!;
   }
 
   Color _getMemoryColor(double memoryUsage) {
-    if (memoryUsage < 60) return Colors.green;
-    if (memoryUsage < 70) return Colors.yellow;
-    if (memoryUsage < 80) return Colors.orange;
-    return Colors.red;
+    if (memoryUsage < 60) return Colors.indigo[600]!;
+    if (memoryUsage < 70) return Colors.deepPurple[600]!;
+    if (memoryUsage < 80) return Colors.orange[700]!;
+    return Colors.red[600]!;
+  }
+
+  Widget _buildHistoryTile(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          colors: [
+            Colors.indigo.shade800,
+            const Color.fromARGB(255, 81, 174, 224),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.indigo.withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const HistoryScreen()),
+            );
+          },
+          borderRadius: BorderRadius.circular(28),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.analytics_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'History & Analytics',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Deep dive into your device logs',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -22,6 +22,12 @@ export interface VitalAnalytics {
         battery: number;
         memory: number;
     };
+    min_max: {
+        all_time: MinMaxValues;
+        last_hour: MinMaxValues;
+        last_day: MinMaxValues;
+        last_week: MinMaxValues;
+    };
     total_logs: number;
     latest_timestamp: string | null;
     device_count: number;
@@ -29,6 +35,12 @@ export interface VitalAnalytics {
         earliest: string | null;
         latest: string | null;
     };
+}
+
+export interface MinMaxValues {
+    thermal: { min: number; max: number };
+    battery: { min: number; max: number };
+    memory: { min: number; max: number };
 }
 
 export interface ValidationError {

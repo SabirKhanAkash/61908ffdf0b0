@@ -6,11 +6,37 @@ part 'vital_analytics.freezed.dart';
 sealed class VitalAnalytics with _$VitalAnalytics {
   const factory VitalAnalytics({
     required RollingAverage rollingAverage,
+    required MinMaxStats minMax,
     required int totalLogs,
     String? latestTimestamp,
     required int deviceCount,
     required TimeRange timeRange,
   }) = _VitalAnalytics;
+}
+
+@freezed
+sealed class MinMaxStats with _$MinMaxStats {
+  const factory MinMaxStats({
+    required PeriodStats allTime,
+    required PeriodStats lastHour,
+    required PeriodStats lastDay,
+    required PeriodStats lastWeek,
+  }) = _MinMaxStats;
+}
+
+@freezed
+sealed class PeriodStats with _$PeriodStats {
+  const factory PeriodStats({
+    required MinMaxValues thermal,
+    required MinMaxValues battery,
+    required MinMaxValues memory,
+  }) = _PeriodStats;
+}
+
+@freezed
+sealed class MinMaxValues with _$MinMaxValues {
+  const factory MinMaxValues({required double min, required double max}) =
+      _MinMaxValues;
 }
 
 @freezed
