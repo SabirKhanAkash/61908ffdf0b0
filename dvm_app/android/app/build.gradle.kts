@@ -51,7 +51,7 @@ android {
     flavorDimensions += "default"
 
     productFlavors {
-        create("development") {
+        create("dev") {
             dimension = "default"
             resValue(
                 type = "string",
@@ -69,7 +69,7 @@ android {
             )
             applicationIdSuffix = ".stage"
         }
-        create("production") {
+        create("prod") {
             dimension = "default"
             resValue(
                 type = "string",
