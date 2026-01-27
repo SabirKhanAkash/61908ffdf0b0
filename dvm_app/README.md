@@ -31,7 +31,7 @@ A Flutter application designed to monitor device sensor data (thermal state, bat
 
 1.  **Clone the Repository**:
     ```bash
-    git clone https://github.com/SabirKhanAkash/61908ffdf0b0
+    git clone https://github.com/SabirKhanAkash/61908ffdf0b0.git
     cd dvm_app
     ```
 
