@@ -42,25 +42,30 @@ class _DashboardViewState extends State<_DashboardView>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   static const int refreshInterval = 15;
+  bool _isAutoLogEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: refreshInterval),
+      duration: const Duration(seconds: refreshInterval),
     );
 
-    _animationController.addStatusListener((status) {
+    _animationController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
         if (mounted) {
-          context.read<SensorCubit>().refresh();
-          context.read<SensorCubit>().state.maybeWhen(
-            success: (data) {
-              _logCurrentStatus(context, data);
-            },
-            orElse: () {},
-          );
+          await context.read<SensorCubit>().refresh();
+
+          if (!mounted) return;
+
+          if (_isAutoLogEnabled) {
+            context.read<SensorCubit>().state.maybeWhen(
+              success: (data) => _logCurrentStatus(context, data),
+              orElse: () {},
+            );
+          }
+
           _animationController.forward(from: 0.0);
         }
       }
@@ -126,23 +131,25 @@ class _DashboardViewState extends State<_DashboardView>
               );
             },
             posted: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              if (!_isAutoLogEnabled) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    content: const Row(
+                      children: [
+                        Icon(Icons.check_circle_rounded, color: Colors.white),
+                        SizedBox(width: 16),
+                        Text('Vitals logged successfully'),
+                      ],
+                    ),
+                    backgroundColor: Colors.green[600],
+                    duration: const Duration(seconds: 2),
                   ),
-                  content: const Row(
-                    children: [
-                      Icon(Icons.check_circle_rounded, color: Colors.white),
-                      SizedBox(width: 16),
-                      Text('Vitals logged successfully'),
-                    ],
-                  ),
-                  backgroundColor: Colors.green[600],
-                  duration: const Duration(seconds: 2),
-                ),
-              );
+                );
+              }
             },
             loadingHistory: () {},
             historyLoaded: (_) {},
@@ -199,6 +206,65 @@ class _DashboardViewState extends State<_DashboardView>
                       ),
                       success: (SensorData data) => Column(
                         children: [
+                          /// Auto-Log Toggle
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: _isAutoLogEnabled
+                                    ? Colors.green.withValues(alpha: 0.2)
+                                    : Colors.grey.withValues(alpha: 0.1),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _isAutoLogEnabled
+                                      ? Icons.auto_mode_rounded
+                                      : Icons.auto_mode_outlined,
+                                  color: _isAutoLogEnabled
+                                      ? Colors.green[600]
+                                      : Colors.grey,
+                                ),
+                                const SizedBox(width: 12),
+                                const Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Automatic Logging',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Save vitals every 15s',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Switch.adaptive(
+                                  value: _isAutoLogEnabled,
+                                  activeTrackColor: Colors.green[600],
+                                  onChanged: (value) =>
+                                      setState(() => _isAutoLogEnabled = value),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
                           /// Primary: Thermal State
                           ThermalHealthCard(
                             data: data,

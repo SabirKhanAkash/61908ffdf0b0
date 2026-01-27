@@ -80,16 +80,25 @@ class _HistoryView extends StatelessWidget {
               builder: (context, state) {
                 return state.when(
                   initial: () => const SliverFillRemaining(
+                    hasScrollBody: false,
                     child: Center(child: Text('No data')),
                   ),
-                  posting: () => const SliverFillRemaining(child: Loader()),
-                  posted: () => const SliverFillRemaining(child: Loader()),
+                  posting: () => const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Loader(),
+                  ),
+                  posted: () => const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Loader(),
+                  ),
                   loadingHistory: () => const SliverFillRemaining(
+                    hasScrollBody: false,
                     child: Loader(message: 'Loading history...'),
                   ),
                   historyLoaded: (logs) {
                     if (logs.isEmpty) {
                       return const SliverFillRemaining(
+                        hasScrollBody: false,
                         child: EmptyHistoryView(),
                       );
                     }
@@ -102,6 +111,7 @@ class _HistoryView extends StatelessWidget {
                     );
                   },
                   error: (failure) => SliverFillRemaining(
+                    hasScrollBody: false,
                     child: ErrorDisplay(
                       message: failure.message.toString(),
                       onRetry: () {

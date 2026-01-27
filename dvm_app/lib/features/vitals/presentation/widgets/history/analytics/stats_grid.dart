@@ -33,9 +33,7 @@ class StatsGrid extends StatelessWidget {
             Expanded(
               child: _buildModernStatCard(
                 label: 'Oldest Log',
-                value: DateFormatter.format(
-                  DateTime.parse(analytics.timeRange.earliest.toString()),
-                ),
+                value: _formatDate(analytics.timeRange.earliest),
                 icon: Icons.first_page_rounded,
                 gradient: LinearGradient(
                   colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
@@ -48,9 +46,7 @@ class StatsGrid extends StatelessWidget {
             Expanded(
               child: _buildModernStatCard(
                 label: 'Latest Log',
-                value: DateFormatter.format(
-                  DateTime.parse(analytics.timeRange.latest.toString()),
-                ),
+                value: _formatDate(analytics.timeRange.latest),
                 icon: Icons.last_page_rounded,
                 gradient: LinearGradient(
                   colors: [Colors.teal.shade400, Colors.teal.shade700],
@@ -63,6 +59,15 @@ class StatsGrid extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return 'N/A';
+    try {
+      return DateFormatter.format(DateTime.parse(dateStr));
+    } catch (_) {
+      return 'N/A';
+    }
   }
 
   Widget _buildModernStatCard({

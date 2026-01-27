@@ -1,0 +1,5 @@
+Analyzing dvm_app...                                            
+
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\features\vitals\presentation\screens\dashboard_screen.dart:263:35 - deprecated_member_use
+
+1 issue found. (ran in 4.5s)
