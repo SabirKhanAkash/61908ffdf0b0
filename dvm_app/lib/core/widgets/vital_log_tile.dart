@@ -18,7 +18,7 @@ class VitalLogTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -160,7 +160,7 @@ class VitalLogTile extends StatelessWidget {
                 value,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: color.withOpacity(0.9),
+                  color: color.withValues(alpha: 0.9),
                   fontSize: 13,
                 ),
               ),
@@ -182,7 +182,7 @@ class VitalLogTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(2),
           child: LinearProgressIndicator(
             value: progress.clamp(0.0, 1.0),
-            backgroundColor: color.withOpacity(0.1),
+            backgroundColor: color.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 2,
           ),

@@ -9,7 +9,7 @@
             "program": "lib/main_dev.dart",
             "args": [
                 "--flavor",
-                "development"
+                "dev"
             ]
         },
         {
@@ -20,7 +20,7 @@
             "program": "lib/main_dev.dart",
             "args": [
                 "--flavor",
-                "development"
+                "dev"
             ]
         },
         {
@@ -53,7 +53,7 @@
             "program": "lib/main_prod.dart",
             "args": [
                 "--flavor",
-                "production"
+                "prod"
             ]
         },
         {
@@ -64,7 +64,7 @@
             "program": "lib/main_prod.dart",
             "args": [
                 "--flavor",
-                "production"
+                "prod"
             ]
         }
     ]

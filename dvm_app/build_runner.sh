@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Make the script executable
+chmod +x build_runner.sh
+
 # Code generation script for Freezed and JSON Serializable
 
 echo "🧹 Cleaning old generated files..."

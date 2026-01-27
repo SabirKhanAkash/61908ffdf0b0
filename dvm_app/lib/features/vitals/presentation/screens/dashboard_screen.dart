@@ -1,18 +1,20 @@
 import 'dart:io';
 import 'package:dvm_app/core/di/injection_container.dart';
-import 'package:dvm_app/core/utils/thermal_mapper.dart';
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/sensor/sensor_cubit.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/sensor/sensor_state.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/vitals/vitals_cubit.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/vitals/vitals_state.dart';
-import 'package:dvm_app/features/vitals/presentation/widgets/error_display.dart';
-import 'package:dvm_app/features/vitals/presentation/widgets/loader.dart';
-import 'package:dvm_app/features/vitals/presentation/widgets/sensor_card.dart';
+import 'package:dvm_app/features/vitals/presentation/widgets/dashboard/dashboard_timer_action.dart';
+import 'package:dvm_app/features/vitals/presentation/widgets/dashboard/history_analytics_card.dart';
+import 'package:dvm_app/features/vitals/presentation/widgets/dashboard/persist_log_button.dart';
+import 'package:dvm_app/features/vitals/presentation/widgets/dashboard/resource_usage_grid.dart';
+import 'package:dvm_app/features/vitals/presentation/widgets/dashboard/thermal_health_card.dart';
+import 'package:dvm_app/core/widgets/error_display.dart';
+import 'package:dvm_app/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'history_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -39,14 +41,14 @@ class _DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<_DashboardView>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
-  static const int REFRESH_INTERVAL = 15;
+  static const int refreshInterval = 15;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: REFRESH_INTERVAL),
+      duration: Duration(seconds: refreshInterval),
     );
 
     _animationController.addStatusListener((status) {
@@ -86,41 +88,9 @@ class _DashboardViewState extends State<_DashboardView>
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                final progress = 1.0 - _animationController.value;
-                final seconds = (progress * REFRESH_INTERVAL).ceil();
-
-                return Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 28,
-                      height: 28,
-                      child: CircularProgressIndicator(
-                        value: progress,
-                        strokeWidth: 2.5,
-                        backgroundColor: Colors.indigo.withValues(alpha: 0.1),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.indigo.shade400,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '$seconds',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.indigo.shade600,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+          DashboardTimerAction(
+            animationController: _animationController,
+            refreshInterval: refreshInterval,
           ),
         ],
       ),
@@ -230,109 +200,25 @@ class _DashboardViewState extends State<_DashboardView>
                       success: (SensorData data) => Column(
                         children: [
                           /// Primary: Thermal State
-                          SensorCard(
-                            isPrimary: true,
-                            title: 'Thermal Health',
-                            value: ThermalMapper.getLabel(data.thermalValue),
-                            subtitle: 'Value identifier: ${data.thermalValue}',
-                            icon: Icons.thermostat_rounded,
-                            color: _getThermalColor(data.thermalValue),
-                            onAction: () {
+                          ThermalHealthCard(
+                            data: data,
+                            onRefresh: () {
                               _animationController.forward(from: 0.0);
                               context.read<SensorCubit>().refresh();
                             },
-                            actionIcon: Icons.refresh_rounded,
                           ),
                           const SizedBox(height: 20),
 
                           /// Secondary: Battery & Memory Grid
-                          Row(
-                            children: [
-                              Expanded(
-                                child: SensorCard(
-                                  title: 'Battery',
-                                  value:
-                                      '${data.batteryLevel.toStringAsFixed(0)}%',
-                                  subtitle: 'Energy',
-                                  icon: Icons.bolt_rounded,
-                                  color: _getBatteryColor(data.batteryLevel),
-                                  progress: data.batteryLevel / 100,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: SensorCard(
-                                  title: 'Memory',
-                                  value:
-                                      '${data.memoryUsage.toStringAsFixed(0)}%',
-                                  subtitle: 'RAM Use',
-                                  icon: Icons.memory_rounded,
-                                  color: _getMemoryColor(data.memoryUsage),
-                                  progress: data.memoryUsage / 100,
-                                ),
-                              ),
-                            ],
-                          ),
+                          ResourceUsageGrid(data: data),
                           const SizedBox(height: 24),
 
                           /// History & Analytics Tile
-                          _buildHistoryTile(context),
+                          const HistoryAnalyticsCard(),
                           const SizedBox(height: 32),
 
                           /// Action Buttons
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.green.withValues(
-                                          alpha: 0.25,
-                                        ),
-                                        blurRadius: 15,
-                                        offset: const Offset(0, 8),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () =>
-                                        _logCurrentStatus(context, data),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green[600],
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 18,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.cloud_upload_rounded),
-                                        SizedBox(width: 12),
-                                        Text(
-                                          'PERSIST LOG NOW',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: 1,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          PersistLogButton(sensorData: data),
                         ],
                       ),
                       failure: (failure) => ErrorDisplay(
@@ -374,119 +260,5 @@ class _DashboardViewState extends State<_DashboardView>
     } else {
       return 'unknown-${DateTime.now().millisecondsSinceEpoch}';
     }
-  }
-
-  Color _getThermalColor(int thermalValue) {
-    switch (thermalValue) {
-      case 0:
-        return Colors.green[600]!;
-      case 1:
-        return Colors.yellow[800]!;
-      case 2:
-        return Colors.orange[700]!;
-      case 3:
-        return Colors.red[700]!;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Color _getBatteryColor(double batteryLevel) {
-    if (batteryLevel > 60) return Colors.teal[600]!;
-    if (batteryLevel > 40) return Colors.amber[700]!;
-    if (batteryLevel > 20) return Colors.orange[700]!;
-    return Colors.red[600]!;
-  }
-
-  Color _getMemoryColor(double memoryUsage) {
-    if (memoryUsage < 60) return Colors.indigo[600]!;
-    if (memoryUsage < 70) return Colors.deepPurple[600]!;
-    if (memoryUsage < 80) return Colors.orange[700]!;
-    return Colors.red[600]!;
-  }
-
-  Widget _buildHistoryTile(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            Colors.indigo.shade800,
-            const Color.fromARGB(255, 81, 174, 224),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.indigo.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const HistoryScreen()),
-            );
-          },
-          borderRadius: BorderRadius.circular(28),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.analytics_rounded,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'History & Analytics',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Deep dive into your device logs',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
