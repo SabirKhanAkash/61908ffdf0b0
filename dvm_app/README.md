@@ -31,11 +31,11 @@
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/c7a6eb24-1aa3-49ac-a5f5-6021c4e65dff" width="270" height="570" alt=""/><br>
+      <img src="https://github.com/user-attachments/assets/93e985a5-9d3c-481a-b5d5-3a0edfeff703" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/b6ef477a-50b7-40bf-b431-ca8f8c3229ad" width="270" height="570" alt=""/><br>
+      <img src="https://github.com/user-attachments/assets/8621ddc3-dbf7-41ed-ad05-b67c90fac599" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
   </tr>
