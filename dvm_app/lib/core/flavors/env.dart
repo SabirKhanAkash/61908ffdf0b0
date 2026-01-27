@@ -23,7 +23,7 @@ class Env {
 
   static const stage = Env(
     flavorName: 'stage',
-    baseUrl: 'https://61908ffdf0b0-sabir-khan-akashs-projects.vercel.app',
+    baseUrl: 'https://61908ffdf0b0-qf8sf9b29-sabir-khan-akashs-projects.vercel.app',
     enableLogging: true,
     connectionTimeout: 7,
     receiveTimeout: 7,
@@ -31,7 +31,7 @@ class Env {
 
   static const prod = Env(
     flavorName: 'prod',
-    baseUrl: 'https://61908ffdf0b0-hz2tkh5uj-sabir-khan-akashs-projects.vercel.app',
+    baseUrl: 'https://61908ffdf0b0-sabir-khan-akashs-projects.vercel.app',
     enableLogging: false,
     connectionTimeout: 5,
     receiveTimeout: 5,
