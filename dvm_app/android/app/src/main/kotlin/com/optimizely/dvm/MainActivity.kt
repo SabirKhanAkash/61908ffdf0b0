@@ -33,9 +33,10 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun getThermalStatus(): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            return when (powerManager.currentThermalStatus) {
+    val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            when (powerManager.currentThermalStatus) {
                 PowerManager.THERMAL_STATUS_NONE -> 0
                 PowerManager.THERMAL_STATUS_LIGHT -> 1
                 PowerManager.THERMAL_STATUS_MODERATE -> 2
@@ -45,8 +46,21 @@ class MainActivity : FlutterActivity() {
                 PowerManager.THERMAL_STATUS_SHUTDOWN -> 3
                 else -> 0
             }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            try {
+                val headroom = powerManager.getThermalHeadroom(0)
+                when {
+                    headroom >= 0.8f -> 0
+                    headroom >= 0.5f -> 1
+                    headroom >= 0.2f -> 2
+                    else -> 3
+                }
+            } catch (e: Exception) {
+                0
+            }
+        } else {
+            0
         }
-        return 0
     }
 
     private fun getBatteryLevel(): Double {
