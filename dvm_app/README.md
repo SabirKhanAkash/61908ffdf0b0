@@ -1,5 +1,46 @@
 # Device Vital Monitor (DVM)
 
+## In-App Screenshots
+
+<table>
+  <tr>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/f6cad6ca-c9fc-4b15-9aee-4b893c903224" width="270" height="570" alt="Splash Screen"/><br>
+      <i></i>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/2d3ce835-4dbe-4c8b-923a-8491fc6af53e" width="270" height="570" alt="Login Screen (Loading)"/><br>
+      <i></i>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/3ac59b6a-8c45-4a61-8599-a6d993f329a3" width="270" height="570" alt="Login Screen (Login Success)"/><br>
+      <i></i>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/80be79bb-cfa2-4743-9920-39eabd7539e5" width="270" height="570" alt="Login Screen (Login Success)"/><br>
+      <i></i>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/dbc7c72c-0316-4dae-9ea9-f684fc31fbc6" width="270" height="570" alt="Home Screen"/><br>
+      <i></i>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/f77c2c64-8fd9-4e0a-aeef-86b75d7e5f1e" width="270" height="570" alt="Space Station on User's Country"/><br>
+      <i></i>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/161edce8-ba45-479f-834b-f52e68914d87" width="270" height="570" alt="Space Station on Unknown Country/Region"/><br>
+      <i></i>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/b6ef477a-50b7-40bf-b431-ca8f8c3229ad" width="270" height="570" alt="Space Station on Unknown Country/Region"/><br>
+      <i></i>
+    </td>
+  </tr>
+</table>
+
 A Flutter application designed to monitor device sensor data (thermal state, battery level, memory usage) and log it to a backend service. This project demonstrates Flutter UI development, clean architecture, and native platform integration via MethodChannels.
 
 ## Features
@@ -8,7 +49,7 @@ A Flutter application designed to monitor device sensor data (thermal state, bat
 - **Vitals Logging**: Send current sensor readings to the backend API.
 - **History & Analytics**: View historical logs and analyzed data trends.
 - **Native Integration**:
-  - **Android**: Uses `PowerManager`, `BatteryManager`, and `ActivityManager` via core Platform Channels.
+  - **Android**: Uses `PowerManager`, `BatteryManager`, and `ActivityManager` via targeting core Android Specific Platform Channels.
   - **Thermal API**: Smart support for `getCurrentThermalStatus` (API 29+) and `getThermalHeadroom` (API < 29).
   - **Battery API**: Smart support for `BATTERY_PROPERTY_CAPACITY` (API < 29).
   - **Memory API**: Smart support for `MemoryInfo` (API < 29).
