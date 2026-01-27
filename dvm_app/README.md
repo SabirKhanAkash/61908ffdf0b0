@@ -5,37 +5,37 @@
 <table>
   <tr>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/f6cad6ca-c9fc-4b15-9aee-4b893c903224" width="270" height="570" alt="Splash Screen"/><br>
+      <img src="https://github.com/user-attachments/assets/f6cad6ca-c9fc-4b15-9aee-4b893c903224" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/2d3ce835-4dbe-4c8b-923a-8491fc6af53e" width="270" height="570" alt="Login Screen (Loading)"/><br>
+      <img src="https://github.com/user-attachments/assets/6cb1adc1-5d34-4f55-8784-43d94e1fb99f" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/3ac59b6a-8c45-4a61-8599-a6d993f329a3" width="270" height="570" alt="Login Screen (Login Success)"/><br>
+      <img src="https://github.com/user-attachments/assets/8933d2c6-45d1-46a8-9daf-ad897548f03d" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/80be79bb-cfa2-4743-9920-39eabd7539e5" width="270" height="570" alt="Login Screen (Login Success)"/><br>
+      <img src="https://github.com/user-attachments/assets/9003fb6e-63d7-4df8-a1fd-44a916ef7c28" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
   </tr>
   <tr>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/dbc7c72c-0316-4dae-9ea9-f684fc31fbc6" width="270" height="570" alt="Home Screen"/><br>
+      <img src="https://github.com/user-attachments/assets/dbc7c72c-0316-4dae-9ea9-f684fc31fbc6" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/f77c2c64-8fd9-4e0a-aeef-86b75d7e5f1e" width="270" height="570" alt="Space Station on User's Country"/><br>
+      <img src="https://github.com/user-attachments/assets/f77c2c64-8fd9-4e0a-aeef-86b75d7e5f1e" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/161edce8-ba45-479f-834b-f52e68914d87" width="270" height="570" alt="Space Station on Unknown Country/Region"/><br>
+      <img src="https://github.com/user-attachments/assets/c7a6eb24-1aa3-49ac-a5f5-6021c4e65dff" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/b6ef477a-50b7-40bf-b431-ca8f8c3229ad" width="270" height="570" alt="Space Station on Unknown Country/Region"/><br>
+      <img src="https://github.com/user-attachments/assets/b6ef477a-50b7-40bf-b431-ca8f8c3229ad" width="270" height="570" alt=""/><br>
       <i></i>
     </td>
   </tr>
