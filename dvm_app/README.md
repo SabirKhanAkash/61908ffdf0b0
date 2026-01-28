@@ -91,17 +91,17 @@ Use `dev` for local backend development.
 **NOTE:** If you want to run the `dev` flavor, then first you need to run the backend server on your machine locally. So, go to 
 ```dvm_app\lib\core\flavors\env.dart``` 
 
-```bash
+```dart
 static const dev = Env(
     flavorName: 'dev',
-    baseUrl: 'http://your-local-ip-here:3000',
+    baseUrl: 'http://your-local-ip-here:3000', /// <-- and change this baseUrl to your machine's local IP
     enableLogging: true,
     connectionTimeout: 10,
     receiveTimeout: 10,
   );
 ```
 
-and change the baseUrl to your local machine's IP address. 
+then run the following command in the terminal 
 
 ```bash
 [DEBUG Mode]
