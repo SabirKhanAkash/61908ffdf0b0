@@ -66,7 +66,8 @@ npm run build
 npm start
 ```
 
-The server will start at `http://localhost:3000` (or your configured PORT).
+The server will start at `http://localhost:3000`.
+You can check the health endpoint from: `http://localhost:3000/health` (or your configured PORT).
 
 ## 🧪 Testing
 
