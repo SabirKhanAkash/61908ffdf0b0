@@ -170,10 +170,10 @@ lib/
 └── main_stage.dart # Entry point for Stage flavor
 ```
 
-## Native Implementation Details
-
+## Target Native Implementation Details
+### Targeted both Android & iOS native platform
 ## Android
-Implements specific thermal status logic in `MainActivity.kt`:
+Implements specific thermal status, battery level, and memory usage logic in `MainActivity.kt`:
 
 ## For Thermal Status
 - **API < 29**: Uses `PowerManager.getThermalHeadroom`.
@@ -186,5 +186,21 @@ Implements specific thermal status logic in `MainActivity.kt`:
 
 ## For Memory Usage
 - Uses `ActivityManager.MemoryInfo`.
+- **Fallback**: Returns 0 ("None") for older devices.
+
+## iOS
+Implements specific thermal status, battery level, and memory usage logic in `AppDelegate.swift`:
+
+## For Thermal Status
+- Uses `ProcessInfo.processInfo.thermalState`
+- Map thermal state: nominal = 0, fair = 1, serious = 2, critical = 3.
+- **Fallback**: Returns 0 ("None") for older devices.
+
+## For Battery Level
+- Uses `UIDevice.current.batteryLevel`. Needed to convert 0.0-1.0 to 0-100.
+- **Fallback**: Returns 0 ("None") for older devices.
+
+## For Memory Usage
+- Uses `mach_task_basic_info` to calculate used memory percentage.
 - **Fallback**: Returns 0 ("None") for older devices.
 

@@ -39,10 +39,10 @@ void main() {
         .setMockMethodCallHandler(mockChannel, null);
   });
 
-  group('getAndroidSensorData', () {
+  group('getSensorData', () {
     test('should return SensorData when platform call is successful', () async {
       // act
-      final result = await dataSource.getAndroidSensorData();
+      final result = await dataSource.getSensorData();
 
       // assert
       expect(result.thermalValue, 1);
@@ -58,7 +58,7 @@ void main() {
           });
 
       // act
-      final call = dataSource.getAndroidSensorData;
+      final call = dataSource.getSensorData;
 
       // assert
       expect(() => call(), throwsA(isA<PlatformException>()));
@@ -76,7 +76,7 @@ void main() {
             });
 
         // act
-        final call = dataSource.getAndroidSensorData;
+        final call = dataSource.getSensorData;
 
         // assert
         expect(() => call(), throwsA(isA<PlatformException>()));

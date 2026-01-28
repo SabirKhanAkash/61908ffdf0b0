@@ -5,7 +5,7 @@ import 'package:dvm_app/core/flavors/env.dart';
 import 'package:flutter/material.dart';
 
 /// default app entry point
-/// Run with: flutter run -t lib/main.dart
+/// Run with: flutter run -t lib/main.dart --flavor prod
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

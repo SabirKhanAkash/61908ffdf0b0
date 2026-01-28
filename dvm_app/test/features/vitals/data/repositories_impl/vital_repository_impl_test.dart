@@ -81,10 +81,7 @@ void main() {
       () async {
         // arrange
         when(
-          () => mockPlatformDataSource.getAndroidSensorData(),
-        ).thenAnswer((_) async => tSensorData);
-        when(
-          () => mockPlatformDataSource.getIOSSensorData(),
+          () => mockPlatformDataSource.getSensorData(),
         ).thenAnswer((_) async => tSensorData);
 
         // act
@@ -99,10 +96,7 @@ void main() {
     test('should return Failure when platformDataSource call fails', () async {
       // arrange
       when(
-        () => mockPlatformDataSource.getAndroidSensorData(),
-      ).thenThrow(Exception('Platform error'));
-      when(
-        () => mockPlatformDataSource.getIOSSensorData(),
+        () => mockPlatformDataSource.getSensorData(),
       ).thenThrow(Exception('Platform error'));
 
       // act

@@ -13,7 +13,7 @@ class VitalPlatformDataSourceImpl implements VitalPlatformDataSource {
           const MethodChannel(AppConstants.platformChannelName);
 
   @override
-  Future<SensorData> getAndroidSensorData() async {
+  Future<SensorData> getSensorData() async {
     try {
       final result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
         AppConstants.methodGetSensorData,
@@ -38,11 +38,5 @@ class VitalPlatformDataSourceImpl implements VitalPlatformDataSource {
         code: '',
       );
     }
-  }
-
-  @override
-  Future<SensorData> getIOSSensorData() {
-    // TODO: implement getIOSSensorData
-    throw UnimplementedError();
   }
 }

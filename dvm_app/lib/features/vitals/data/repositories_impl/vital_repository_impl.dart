@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dartz/dartz.dart';
 import 'package:dvm_app/core/errors/errors.dart';
 import 'package:dvm_app/features/vitals/domain/data_sources/data_sources.dart';
@@ -19,9 +17,7 @@ class VitalRepositoryImpl implements VitalRepository {
   @override
   Future<Either<Failure, SensorData>> getCurrentSensorData() async {
     try {
-      final sensorData = Platform.isAndroid
-          ? await platformDataSource.getAndroidSensorData()
-          : await platformDataSource.getIOSSensorData();
+      final sensorData = await platformDataSource.getSensorData();
       return Right(sensorData);
     } on PlatformException catch (e) {
       return Left(Failure.platform(e.message));
