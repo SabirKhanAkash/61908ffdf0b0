@@ -36,3 +36,23 @@
 2. **Backend**: The API rejects invalid data with 400 Bad Request.
 
 **Trade-offs**: Stricter validation might reject some edge-case logs, but ensures data quality for analytics.
+
+---
+
+## Ambiguity 4: Device Identification Strategy
+**Question**: The requirement for `deviceId` was ambiguous regarding its scope and persistence. Should it be a unique code per log entry, a session-based ID, or a persistent identifier for the physical hardware?
+
+**Options Considered**:
+- **Option A**: Generate a random UUID/Timestamp for every log (Initial approach).
+- **Option B**: Generate a UUID once when the app starts (session-based).
+- **Option C**: Use persistent hardware identifiers (Android ID and iOS `identifierForVendor`).
+
+**Decision**: I chose **Option C**.
+
+**Reasoning**:
+- **Meaningful Analytics**: Analytics like rolling averages, min/max values, and historical trends are mathematically useful only when grouped by a consistent identity. Persistent IDs allow for per-device profiling.
+- **Backend Filtering**: Implementing the `x-device-id` header allows the backend to reliably filter data so a user only sees history and analytics for their specific device.
+- **Hardware Context**: Vitals (thermal, battery, memory) are tied to specific hardware; tracking them against a consistent ID provides a true representation of that device's health over time.
+
+**Trade-offs**: Requires an additional dependency (`device_info_plus`) and a slight delay during app initialization to fetch the hardware info asynchronously.
+

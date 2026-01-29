@@ -204,3 +204,6 @@ Implements specific thermal status, battery level, and memory usage logic in `Ap
 - Uses `mach_task_basic_info` to calculate used memory percentage.
 - **Fallback**: Returns 0 ("None") for older devices.
 
+## Production Build
+The production release APK for Android can be found here: [DVM-v1.0-prod-release.apk](file:///d:/study-and-work/work-materials/my-flutter-workspace/61908ffdf0b0/dvm_app/DVM-v1.0-prod-release.apk)
+
