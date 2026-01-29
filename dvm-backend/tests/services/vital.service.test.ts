@@ -16,12 +16,20 @@ class MockVitalRepository {
         return log;
     }
 
-    async getLatest(limit: number): Promise<VitalLog[]> {
-        return this.logs.slice(-limit).reverse();
+    async getLatest(limit: number, deviceId?: string): Promise<VitalLog[]> {
+        let filtered = this.logs;
+        if (deviceId) {
+            filtered = filtered.filter(l => l.device_id === deviceId);
+        }
+        return filtered.slice(-limit).reverse();
     }
 
-    async calculateRollingAverage(limit: number) {
-        const recentLogs = this.logs.slice(-limit);
+    async calculateRollingAverage(limit: number, deviceId?: string) {
+        let filtered = this.logs;
+        if (deviceId) {
+            filtered = filtered.filter(l => l.device_id === deviceId);
+        }
+        const recentLogs = filtered.slice(-limit);
         if (recentLogs.length === 0) {
             return { thermal: 0, battery: 0, memory: 0 };
         }
@@ -42,7 +50,10 @@ class MockVitalRepository {
         };
     }
 
-    async count(): Promise<number> {
+    async count(deviceId?: string): Promise<number> {
+        if (deviceId) {
+            return this.logs.filter(l => l.device_id === deviceId).length;
+        }
         return this.logs.length;
     }
 
@@ -51,11 +62,15 @@ class MockVitalRepository {
         return devices.size;
     }
 
-    async getTimeRange() {
-        if (this.logs.length === 0) {
+    async getTimeRange(deviceId?: string) {
+        let filtered = this.logs;
+        if (deviceId) {
+            filtered = filtered.filter(l => l.device_id === deviceId);
+        }
+        if (filtered.length === 0) {
             return { earliest: null, latest: null };
         }
-        const timestamps = this.logs.map(log => log.timestamp).sort();
+        const timestamps = filtered.map(log => log.timestamp).sort();
         return {
             earliest: timestamps[0],
             latest: timestamps[timestamps.length - 1],
@@ -66,14 +81,18 @@ class MockVitalRepository {
         return this.logs.filter(log => log.device_id === deviceId).slice(-limit).reverse();
     }
 
-    async getMinMax(since?: string): Promise<{
+    async getMinMax(since?: string, deviceId?: string): Promise<{
         thermal: { min: number; max: number };
         battery: { min: number; max: number };
         memory: { min: number; max: number };
     }> {
-        const filteredLogs = since
-            ? this.logs.filter(log => log.timestamp >= since)
-            : this.logs;
+        let filteredLogs = this.logs;
+        if (since) {
+            filteredLogs = filteredLogs.filter(log => log.timestamp >= since);
+        }
+        if (deviceId) {
+            filteredLogs = filteredLogs.filter(log => log.device_id === deviceId);
+        }
 
         if (filteredLogs.length === 0) {
             return {
@@ -254,6 +273,58 @@ describe('VitalService', () => {
             expect(analytics.min_max.all_time.thermal).toEqual({ min: 0, max: 0 });
 
             expect(analytics.total_logs).toBe(0);
+        });
+
+        it('should filter analytics by device_id', async () => {
+            // Add data for two different devices
+            await service.createVitalLog({
+                device_id: 'device-1',
+                timestamp: '2024-01-20T10:00:00Z',
+                thermal_value: 0,
+                battery_level: 80,
+                memory_usage: 50,
+            });
+
+            await service.createVitalLog({
+                device_id: 'device-2',
+                timestamp: '2024-01-20T10:01:00Z',
+                thermal_value: 2, // Only for device-2
+                battery_level: 60,
+                memory_usage: 70,
+            });
+
+            const analytics = await service.getAnalytics('device-1');
+
+            expect(analytics.total_logs).toBe(1);
+            expect(analytics.rolling_average.thermal).toBe(0); // device-1 has 0
+            expect(analytics.min_max.all_time.thermal).toEqual({ min: 0, max: 0 });
+        });
+    });
+
+    describe('getLatestLogs', () => {
+        it('should filter logs by device_id', async () => {
+            await service.createVitalLog({
+                device_id: 'device-1',
+                timestamp: '2024-01-20T10:00:00Z',
+                thermal_value: 0,
+                battery_level: 80,
+                memory_usage: 50,
+            });
+
+            await service.createVitalLog({
+                device_id: 'device-2',
+                timestamp: '2024-01-20T10:01:00Z',
+                thermal_value: 2,
+                battery_level: 60,
+                memory_usage: 70,
+            });
+
+            const device1Logs = await service.getLatestLogs(10, 'device-1');
+            const allLogs = await service.getLatestLogs(10);
+
+            expect(device1Logs.length).toBe(1);
+            expect(device1Logs[0].device_id).toBe('device-1');
+            expect(allLogs.length).toBe(2);
         });
     });
 });

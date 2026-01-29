@@ -8,6 +8,8 @@ import 'package:dvm_app/features/vitals/presentation/blocs/sensor/sensor_cubit.d
 import 'package:dvm_app/features/vitals/presentation/blocs/vitals/vitals_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dvm_app/core/services/device_info_service.dart';
 
 final sl = GetIt.instance;
 
@@ -30,7 +32,7 @@ Future<void> initializeDependencies() async {
   );
 
   sl.registerLazySingleton<VitalRemoteDataSource>(
-    () => VitalRemoteDataSourceImpl(client: sl()),
+    () => VitalRemoteDataSourceImpl(client: sl(), deviceInfoService: sl()),
   );
 
   sl.registerLazySingleton<VitalPlatformDataSource>(
@@ -38,4 +40,7 @@ Future<void> initializeDependencies() async {
   );
 
   sl.registerLazySingleton(() => http.Client());
+
+  sl.registerLazySingleton(() => DeviceInfoPlugin());
+  sl.registerLazySingleton(() => DeviceInfoService(sl()));
 }

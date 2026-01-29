@@ -7,11 +7,16 @@ import 'package:http/http.dart' as http;
 import '../models/vital_analytics_model.dart';
 import '../models/vital_log_model.dart';
 import 'package:dvm_app/core/errors/errors.dart';
+import 'package:dvm_app/core/services/device_info_service.dart';
 
 class VitalRemoteDataSourceImpl implements VitalRemoteDataSource {
   final http.Client client;
+  final DeviceInfoService deviceInfoService;
 
-  VitalRemoteDataSourceImpl({required this.client});
+  VitalRemoteDataSourceImpl({
+    required this.client,
+    required this.deviceInfoService,
+  });
 
   @override
   Future<void> postVitalLog(VitalLog log) async {
@@ -52,12 +57,16 @@ class VitalRemoteDataSourceImpl implements VitalRemoteDataSource {
   @override
   Future<List<VitalLog>> getVitals({int limit = 100}) async {
     try {
+      final deviceId = await deviceInfoService.getDeviceId();
       final response = await client
           .get(
             Uri.parse(
               '${ApiConstants.baseUrl}${ApiConstants.vitalsEndpoint}?limit=$limit',
             ),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'x-device-id': deviceId,
+            },
           )
           .timeout(ApiConstants.receiveTimeout);
 
@@ -87,12 +96,16 @@ class VitalRemoteDataSourceImpl implements VitalRemoteDataSource {
   @override
   Future<VitalAnalytics> getAnalytics() async {
     try {
+      final deviceId = await deviceInfoService.getDeviceId();
       final response = await client
           .get(
             Uri.parse(
               '${ApiConstants.baseUrl}${ApiConstants.analyticsEndpoint}',
             ),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'x-device-id': deviceId,
+            },
           )
           .timeout(ApiConstants.receiveTimeout);
 

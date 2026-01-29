@@ -7,15 +7,19 @@ import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
+import 'package:dvm_app/core/services/device_info_service.dart';
 
 import 'package:dvm_app/core/flavors/app_config.dart';
 import 'package:dvm_app/core/flavors/env.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
+class MockDeviceInfoService extends Mock implements DeviceInfoService {}
+
 void main() {
   late VitalRemoteDataSourceImpl dataSource;
   late MockHttpClient mockHttpClient;
+  late MockDeviceInfoService mockDeviceInfoService;
 
   setUpAll(() {
     AppConfig.initialize(
@@ -32,7 +36,16 @@ void main() {
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    dataSource = VitalRemoteDataSourceImpl(client: mockHttpClient);
+    mockDeviceInfoService = MockDeviceInfoService();
+    dataSource = VitalRemoteDataSourceImpl(
+      client: mockHttpClient,
+      deviceInfoService: mockDeviceInfoService,
+    );
+
+    // Default mock behavior
+    when(
+      () => mockDeviceInfoService.getDeviceId(),
+    ).thenAnswer((_) async => 'test_device');
   });
 
   final tVitalLog = VitalLog(
@@ -121,6 +134,17 @@ void main() {
         final result = await dataSource.getVitals();
 
         // assert
+        verify(
+          () => mockHttpClient.get(
+            Uri.parse(
+              '${ApiConstants.baseUrl}${ApiConstants.vitalsEndpoint}?limit=100',
+            ),
+            headers: {
+              'Content-Type': 'application/json',
+              'x-device-id': 'test_device',
+            },
+          ),
+        );
         expect(result, equals(tVitalLogList));
       },
     );

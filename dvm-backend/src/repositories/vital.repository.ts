@@ -29,10 +29,16 @@ export class VitalRepository {
         return createdResult.rows[0] as unknown as VitalLog;
     }
 
-    async getLatest(limit: number = 100): Promise<VitalLog[]> {
+    async getLatest(limit: number = 100, deviceId?: string): Promise<VitalLog[]> {
+        const sql = deviceId
+            ? `SELECT * FROM vitals WHERE device_id = ? ORDER BY timestamp DESC, created_at DESC LIMIT ?`
+            : `SELECT * FROM vitals ORDER BY timestamp DESC, created_at DESC LIMIT ?`;
+
+        const args = deviceId ? [deviceId, limit] : [limit];
+
         const result = await this.db.execute({
-            sql: `SELECT * FROM vitals ORDER BY timestamp DESC, created_at DESC LIMIT ?`,
-            args: [limit]
+            sql,
+            args
         });
         return result.rows as unknown as VitalLog[];
     }
@@ -50,8 +56,12 @@ export class VitalRepository {
         return result.rows as unknown as VitalLog[];
     }
 
-    async count(): Promise<number> {
-        const result = await this.db.execute('SELECT COUNT(*) as count FROM vitals');
+    async count(deviceId?: string): Promise<number> {
+        const sql = deviceId
+            ? 'SELECT COUNT(*) as count FROM vitals WHERE device_id = ?'
+            : 'SELECT COUNT(*) as count FROM vitals';
+        const args = deviceId ? [deviceId] : [];
+        const result = await this.db.execute({ sql, args });
         return result.rows[0].count as number;
     }
 
@@ -60,7 +70,10 @@ export class VitalRepository {
         return result.rows[0].count as number;
     }
 
-    async calculateRollingAverage(limit: number = 100): Promise<{ thermal: number; battery: number; memory: number }> {
+    async calculateRollingAverage(limit: number = 100, deviceId?: string): Promise<{ thermal: number; battery: number; memory: number }> {
+        const whereClause = deviceId ? 'WHERE device_id = ?' : '';
+        const limitClause = 'LIMIT ?';
+
         const result = await this.db.execute({
             sql: `
               SELECT 
@@ -70,11 +83,12 @@ export class VitalRepository {
               FROM (
                 SELECT thermal_value, battery_level, memory_usage
                 FROM vitals
+                ${whereClause}
                 ORDER BY timestamp DESC, created_at DESC
-                LIMIT ?
+                ${limitClause}
               )
             `,
-            args: [limit]
+            args: deviceId ? [deviceId, limit] : [limit]
         });
 
         const row = result.rows[0];
@@ -86,13 +100,18 @@ export class VitalRepository {
         };
     }
 
-    async getTimeRange(): Promise<{ earliest: string | null; latest: string | null }> {
-        const result = await this.db.execute(`
-          SELECT 
-            MIN(timestamp) as earliest,
-            MAX(timestamp) as latest
-          FROM vitals
-        `);
+    async getTimeRange(deviceId?: string): Promise<{ earliest: string | null; latest: string | null }> {
+        const whereClause = deviceId ? 'WHERE device_id = ?' : '';
+        const result = await this.db.execute({
+            sql: `
+              SELECT 
+                MIN(timestamp) as earliest,
+                MAX(timestamp) as latest
+              FROM vitals
+              ${whereClause}
+            `,
+            args: deviceId ? [deviceId] : []
+        });
 
         const row = result.rows[0];
 
@@ -102,26 +121,37 @@ export class VitalRepository {
         };
     }
 
-    async getMinMax(since?: string): Promise<{
+    async getMinMax(since?: string, deviceId?: string): Promise<{
         thermal: { min: number; max: number };
         battery: { min: number; max: number };
         memory: { min: number; max: number };
     }> {
-        const sql = since
-            ? `SELECT 
-                MIN(thermal_value) as min_thermal, MAX(thermal_value) as max_thermal,
-                MIN(battery_level) as min_battery, MAX(battery_level) as max_battery,
-                MIN(memory_usage) as min_memory, MAX(memory_usage) as max_memory
-               FROM vitals WHERE timestamp >= ?`
-            : `SELECT 
+        let sql = `SELECT 
                 MIN(thermal_value) as min_thermal, MAX(thermal_value) as max_thermal,
                 MIN(battery_level) as min_battery, MAX(battery_level) as max_battery,
                 MIN(memory_usage) as min_memory, MAX(memory_usage) as max_memory
                FROM vitals`;
 
+        const conditions: string[] = [];
+        const args: any[] = [];
+
+        if (since) {
+            conditions.push('timestamp >= ?');
+            args.push(since);
+        }
+
+        if (deviceId) {
+            conditions.push('device_id = ?');
+            args.push(deviceId);
+        }
+
+        if (conditions.length > 0) {
+            sql += ` WHERE ${conditions.join(' AND ')}`;
+        }
+
         const result = await this.db.execute({
             sql,
-            args: since ? [since] : []
+            args
         });
 
         const row = result.rows[0];

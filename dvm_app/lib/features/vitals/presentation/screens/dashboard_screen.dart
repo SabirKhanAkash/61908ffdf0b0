@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dvm_app/core/di/injection_container.dart';
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/sensor/sensor_cubit.dart';
@@ -15,6 +14,7 @@ import 'package:dvm_app/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dvm_app/core/services/device_info_service.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -43,6 +43,7 @@ class _DashboardViewState extends State<_DashboardView>
   late AnimationController _animationController;
   static const int refreshInterval = 15;
   bool _isAutoLogEnabled = false;
+  String? _deviceId;
 
   @override
   void initState() {
@@ -51,6 +52,8 @@ class _DashboardViewState extends State<_DashboardView>
       vsync: this,
       duration: const Duration(seconds: refreshInterval),
     );
+
+    _initDeviceId();
 
     _animationController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
@@ -284,7 +287,10 @@ class _DashboardViewState extends State<_DashboardView>
                           const SizedBox(height: 32),
 
                           /// Action Buttons
-                          PersistLogButton(sensorData: data),
+                          PersistLogButton(
+                            sensorData: data,
+                            deviceId: _deviceId,
+                          ),
                         ],
                       ),
                       failure: (failure) => ErrorDisplay(
@@ -304,11 +310,20 @@ class _DashboardViewState extends State<_DashboardView>
     );
   }
 
+  Future<void> _initDeviceId() async {
+    final deviceId = await sl<DeviceInfoService>().getDeviceId();
+    if (mounted) {
+      setState(() {
+        _deviceId = deviceId;
+      });
+    }
+  }
+
   void _logCurrentStatus(BuildContext context, SensorData sensorData) {
-    final deviceId = _getDeviceId();
+    if (_deviceId == null) return;
 
     final log = VitalLog(
-      deviceId: deviceId,
+      deviceId: _deviceId!,
       timestamp: DateTime.now().toUtc(),
       thermalValue: sensorData.thermalValue,
       batteryLevel: sensorData.batteryLevel,
@@ -316,15 +331,5 @@ class _DashboardViewState extends State<_DashboardView>
     );
 
     context.read<VitalsCubit>().postLog(log);
-  }
-
-  String _getDeviceId() {
-    if (Platform.isAndroid) {
-      return 'android-${DateTime.now().millisecondsSinceEpoch}';
-    } else if (Platform.isIOS) {
-      return 'ios-${DateTime.now().millisecondsSinceEpoch}';
-    } else {
-      return 'unknown-${DateTime.now().millisecondsSinceEpoch}';
-    }
   }
 }

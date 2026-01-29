@@ -38,8 +38,9 @@ export class VitalController {
 
     getVitals = async (req: Request, res: Response): Promise<void> => {
         try {
+            const deviceId = req.headers['x-device-id'] as string | undefined;
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
-            const logs = await this.service.getLatestLogs(limit);
+            const logs = await this.service.getLatestLogs(limit, deviceId);
 
             res.status(200).json({
                 success: true,
@@ -58,7 +59,8 @@ export class VitalController {
 
     getAnalytics = async (req: Request, res: Response): Promise<void> => {
         try {
-            const analytics = await this.service.getAnalytics();
+            const deviceId = req.headers['x-device-id'] as string | undefined;
+            const analytics = await this.service.getAnalytics(deviceId);
 
             res.status(200).json({
                 success: true,

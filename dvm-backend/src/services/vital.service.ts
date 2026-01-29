@@ -43,11 +43,11 @@ export class VitalService {
         }
     }
 
-    async getLatestLogs(limit: number = 100): Promise<VitalLog[]> {
-        return await this.repository.getLatest(limit);
+    async getLatestLogs(limit: number = 100, deviceId?: string): Promise<VitalLog[]> {
+        return await this.repository.getLatest(limit, deviceId);
     }
 
-    async getAnalytics(): Promise<VitalAnalytics> {
+    async getAnalytics(deviceId?: string): Promise<VitalAnalytics> {
         const now = new Date();
         const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
         const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
@@ -63,14 +63,14 @@ export class VitalService {
             minMaxDay,
             minMaxWeek
         ] = await Promise.all([
-            this.repository.calculateRollingAverage(100),
-            this.repository.count(),
-            this.repository.countDevices(),
-            this.repository.getTimeRange(),
-            this.repository.getMinMax(),
-            this.repository.getMinMax(oneHourAgo),
-            this.repository.getMinMax(oneDayAgo),
-            this.repository.getMinMax(oneWeekAgo)
+            this.repository.calculateRollingAverage(100, deviceId),
+            this.repository.count(deviceId),
+            this.repository.countDevices(), // Device count is usually global, but we could filter if needed
+            this.repository.getTimeRange(deviceId),
+            this.repository.getMinMax(undefined, deviceId),
+            this.repository.getMinMax(oneHourAgo, deviceId),
+            this.repository.getMinMax(oneDayAgo, deviceId),
+            this.repository.getMinMax(oneWeekAgo, deviceId)
         ]);
 
         const analytics: VitalAnalytics = {

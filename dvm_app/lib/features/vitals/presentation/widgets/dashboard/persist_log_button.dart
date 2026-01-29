@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dvm_app/features/vitals/domain/entities/entities.dart';
 import 'package:dvm_app/features/vitals/presentation/blocs/vitals/vitals_cubit.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PersistLogButton extends StatelessWidget {
   final SensorData sensorData;
+  final String? deviceId;
 
-  const PersistLogButton({super.key, required this.sensorData});
+  const PersistLogButton({super.key, required this.sensorData, this.deviceId});
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +61,29 @@ class PersistLogButton extends StatelessWidget {
   }
 
   void _logCurrentStatus(BuildContext context, SensorData sensorData) {
-    final deviceId = _getDeviceId();
+    if (deviceId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.white),
+              SizedBox(width: 16),
+              Text('Device identification not ready. Try again...'),
+            ],
+          ),
+          backgroundColor: Colors.orange[800],
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
 
     final log = VitalLog(
-      deviceId: deviceId,
+      deviceId: deviceId!,
       timestamp: DateTime.now().toUtc(),
       thermalValue: sensorData.thermalValue,
       batteryLevel: sensorData.batteryLevel,
@@ -72,15 +91,5 @@ class PersistLogButton extends StatelessWidget {
     );
 
     context.read<VitalsCubit>().postLog(log);
-  }
-
-  String _getDeviceId() {
-    if (Platform.isAndroid) {
-      return 'android-${DateTime.now().millisecondsSinceEpoch}';
-    } else if (Platform.isIOS) {
-      return 'ios-${DateTime.now().millisecondsSinceEpoch}';
-    } else {
-      return 'unknown-${DateTime.now().millisecondsSinceEpoch}';
-    }
   }
 }
