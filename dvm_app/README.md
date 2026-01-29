@@ -205,5 +205,5 @@ Implements specific thermal status, battery level, and memory usage logic in `Ap
 - **Fallback**: Returns 0 ("None") for older devices.
 
 ## Production Build
-The production release APK for Android can be found here: [DVM-v1.0-prod-release.apk](file:///d:/study-and-work/work-materials/my-flutter-workspace/61908ffdf0b0/dvm_app/DVM-v1.0-prod-release.apk)
+The production release APK for Android can be found here: https://raw.githubusercontent.com/SabirKhanAkash/61908ffdf0b0/refs/heads/master/dvm_app/DVM-v1.0-prod-release.apk
 
