@@ -66,7 +66,7 @@ A Flutter application designed to monitor device sensor data (thermal state, bat
 
 - Flutter SDK (3.10.7 or compatible)
 - Android Studio / Android SDK (for Android build)
-- Xcode (for iOS build - *iOS native logic pending implementation*)
+- Xcode (for iOS build)
 
 ## Setup & Installation
 
