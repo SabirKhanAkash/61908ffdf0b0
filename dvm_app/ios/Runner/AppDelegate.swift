@@ -48,14 +48,33 @@ import UIKit
     }
   }
 
-  private func getBatteryLevel() -> Double {
-    let device = UIDevice.current
-    device.isBatteryMonitoringEnabled = true
-    if device.batteryLevel < 0 {
-        return 0.0
+  // private func getBatteryLevel() -> Double {
+  //   let device = UIDevice.current
+  //   device.isBatteryMonitoringEnabled = true
+  //   if device.batteryLevel < 0 {
+  //       return 0.0
+  //   }
+  //   return Double(device.batteryLevel * 100)
+  // }
+
+    private func getBatteryLevel() -> Double {
+        let device = UIDevice.current
+        device.isBatteryMonitoringEnabled = true
+
+        let batteryLevel = device.batteryLevel
+
+        // if battery state is unknown (simulator or monitoring disabled)
+        if batteryLevel < 0 {
+            #if targetEnvironment(simulator)
+            print("Simulator detected - battery level unavailable")
+            return Double(1.0 * 100) // returning 100 as mock value
+            #else
+            return 0.0
+            #endif
+        }
+
+        return Double(batteryLevel * 100)
     }
-    return Double(device.batteryLevel * 100)
-  }
 
   private func getMemoryUsage() -> Double {
     var taskInfo = mach_task_basic_info()
